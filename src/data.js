@@ -1,7 +1,7 @@
-import clock from "./assets/component/Clock.png"
-import Coffee from "./assets/component/Coffee.png"
-import Coffee_white from "./assets/component/Coffee-white.png"
-import rest from "./assets/component/rest.png"
+import clock from "./assets/Clock.png"
+import Coffee from "./assets/Coffee.png"
+import Coffee_white from "./assets/Coffee-white.png"
+import rest from "./assets/rest.png"
 
 export const Mode=[
     {

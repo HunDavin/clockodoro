@@ -1,26 +1,4 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
+@import url('https://fonts.googleapis.com/css2?family=Rowdies&display=swap');
 
 body {
   margin: 0;
@@ -28,11 +6,6 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
 }
 
 button {
@@ -46,23 +19,81 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
-  border-color: #646cff;
+
+#root {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+  }
+
+/*This CSS is for ModeBtn*/
+.MbtnWrapper{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.MbtnContainer{
+    background-color: rgb(140, 167, 188);
+    width: 180px;
+    height: 90px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20px 10px 20px ;
+    gap: 0;
+    justify-content: space-between;
+    cursor: pointer;
+    
+}
+.MbtnRow{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    
+}
+.MbtnText{
+    color: white;
+    align-self: center;
+    padding: 0;
+    margin: 0;
+    
+}
+.MbtnTime{
+    color: white;
+    padding: 0;
+    margin: 0;
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    margin-right: 25px;
+
+}
+.MbtnTime-text{
+    font-size: 1.5rem;
+    padding: 0;
+    margin: 0;
+    align-self: center;
+    margin-right: 5px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.MbtnIcon{
+    height: 30px;
+    width: 30px;
 }
+/* This is the end of ModeBtn */
+
+/* This is the Css for Timer */
+.TimerBtn-Container{
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+
+}
+.Timer-btn{
+    width: 120px;
+    background: #747474;
+    color: white;
+}
+/* This is the end of Timer*/
