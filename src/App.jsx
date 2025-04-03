@@ -65,7 +65,7 @@ function App() {
         <h2 className="timer-title">Focus Timer</h2>
         
         <div className="timer-display">
-          <span>{formatTime(minutes)}</span>
+          <span className="time">{formatTime(minutes)}</span>
           <span className="separator">:</span>
           <span className="time">{formatTime(seconds)}</span>
         </div>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clockodoro</title>
+  <link rel="stylesheet" href="src/index.css">
+</head>
+<body style="background-color: #FFF3E2">
+  <div class="app-container">
+    <header class="header">
+      <div class="logo-container">
+        <img src="src/assets/Clockodoro.png" alt="Clockodoro" height="42">
+        <span class="logo-text">Clockodoro</span>
+      </div>
+      
+      <div class="nav-controls">
+        <div class="task-dropdown">
+          <button class="task-button">
+            <span class="check-icon">✓</span>
+            <span class="task-text">Add Task</span>
+            <span class="dropdown-arrow">▼</span>
+          </button>
+        </div>
+        
+        <nav class="nav-links">
+          <a href="#" class="nav-link">Timer Option</a>
+          <a href="#" class="nav-link">Report</a>
+        </nav>
+      </div>
+        
+      <button class="login-button">Login</button>
+    </header>
+
+    <main class="timer-section">
+      <h2 class="timer-title">Focus Timer</h2>
+      
+      <div class="timer-display">
+        <span class="time">25</span>
+        <span class="separator">:</span>
+        <span class="time">00</span>
+      </div>
+      
+      <div class="timer-dots">
+        <span class="dot">⦿</span>
+        <span class="dot">⦿</span>
+        <span class="dot">⦿</span>
+        <span class="dot">⦿</span>
+      </div>
+      
+      <div class="controls-container">
+        <div class="mode-button active" style="background-color: #FF5C5C; color: white;">
+          <div class="mode-header">
+            <span class="mode-name">Focus</span>
+            <img class="sound-icon" src="src/assets/Sound.png" alt="Sound toggle">
+          </div>
+          
+          <div class="mode-content">
+            <img class="mode-icon" src="src/assets/Clock.png" alt="Pomodoro">
+            <div class="mode-time-display">
+              <span class="mode-minutes">25</span>
+              <span class="min-label">min</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mode-button" style="background-color: white; color: #7684FF;">
+          <div class="mode-header">
+            <span class="mode-name">Short Break</span>
+          </div>
+          
+          <div class="mode-content">
+            <img class="mode-icon" src="src/assets/Coffee.png" alt="Short Break">
+            <div class="mode-time-display" style="color: #333">
+              <span class="mode-minutes">05</span>
+              <span class="min-label">min</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mode-button" style="background-color: white; color: black;">
+          <div class="mode-header">
+            <span class="mode-name">Long Break</span>
+          </div>
+          
+          <div class="mode-content">
+            <img class="mode-icon" src="src/assets/rest.png" alt="Long Break">
+            <div class="mode-time-display">
+              <span class="mode-minutes">30</span>
+              <span class="min-label">min</span>
+            </div>
+          </div>
+        </div>
+        
+        <button class="start-button">START</button>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
