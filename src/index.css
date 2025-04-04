@@ -13,12 +13,14 @@
 }
 
 .header {
+  height: 12vh;
+  min-height:110px;
   display: grid;
   grid-template-columns: repeat(5,1fr);
   align-items: center;
   justify-items: center; 
   gap:20px;
-  padding: 30px 7%;
+  padding: 0px 7%;
 }
 
 .logo-container {
@@ -92,57 +94,54 @@
 }
 
 .timer-section {
+  height:76vh;
+  min-height: 600px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 80px;
+  justify-content: space-evenly;
+  padding:0px 0px 50px;
 }
 
 .timer-title {
-  font-size: 24px;
-  color: #999;
-  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #000;
+  opacity: 37%;
 }
 
 .timer-display {
   font-family: 'Rowdies', sans-serif;
-  font-size: 200px;
-  line-height: 1;
+  font-size: 220px;
   color: #333;
-  margin-bottom: 20px;
 }
 
 .separator {
   margin: 0 -40px;
 }
 
-.timer-dots {
+.clock-icons {
+  background-color: #000;
+  opacity: 6%;
   display: flex;
-  gap: 10px;
-  margin-bottom: 40px;
-  color: #ccc;
-}
-
-.dot {
-  font-size: 20px;
+  padding:5px 10px;
+  border-radius: 25px;
 }
 
 .controls-container {
   display: flex;
   gap: 15px;
-  margin-top: 20px;
 }
 
 .mode-button {
-  width: 180px;
-  padding: 15px;
-  border-radius: 10px;
+  width: 190px;
+  padding: 20px;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s;
+  transition: transform 0.2s;
 }
 
 .mode-button.active {
@@ -192,15 +191,33 @@
 }
 
 .start-button {
-  width: 120px;
-  background-color: #666;
+  width: 125px;
+  margin-left: 10px;
   color: white;
+  background-color: #000;
+  opacity: 54%;
   border: none;
-  border-radius: 10px;
+  border-radius: 16px;
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.wave-box {
+  height: 12vh;
+  min-height: 80px;
+  background-color:#FF5C5C;
+  animation: wavy 4s ease-in-out infinite;
+}
+
+@keyframes wavy {
+  0%,100% {
+    clip-path: polygon(0 26%, 10% 16%, 23% 9%, 38% 10%, 57% 21%, 72% 29%, 85% 30%, 100% 27%, 100% 100%, 0 100%);
+  }
+  50% {
+    clip-path: polygon(0 34%, 10% 36%, 21% 35%, 34% 32%, 53% 20%, 69% 11%, 86% 10%, 100% 18%, 100% 100%, 0 100%);
+  }
 }
