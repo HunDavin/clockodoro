@@ -10,9 +10,13 @@
   font-family: 'Poppins', sans-serif;
   color: #333;
   width: 100vw;
+  position: relative;
+  min-height: 100vh;
+  z-index: 0;
 }
 
 .header {
+  position: relative;
   height: 12vh;
   min-height:110px;
   display: grid;
@@ -21,6 +25,7 @@
   justify-items: center; 
   gap:20px;
   padding: 0px 7%;
+  z-index: 2;
 }
 
 .logo-container {
@@ -94,6 +99,7 @@
 }
 
 .timer-section {
+  position: relative;
   height:76vh;
   min-height: 600px;
   display: flex;
@@ -101,6 +107,7 @@
   align-items: center;
   justify-content: space-evenly;
   padding:0px 0px 50px;
+  z-index: 2;
 }
 
 .timer-title {
@@ -208,27 +215,35 @@
 
 .wave-block {
   width: 100%;
-  position: absolute;
-  height: 20px;
-  bottom: 0;
-  background-color: aliceblue;
-  transition: height 1s;
-  z-index: -999;
+  min-height: 100px;
+  z-index: 1;
+  background-color: #FF5C5C;
 }
 
-.wave-box {
+.wave-stretch {
+  width: 100%;
   position: absolute;
-  top:-12vh;
-  height: 12vh;
-  z-index: 999;
+  height: 5vh;
+  min-height: 40px;
+  bottom: 0;
+  background-color: aliceblue;
+  transition: height 1s, min-height 1s;
+  z-index: 0;
+}
+
+.wavy-wave {
+  position: absolute;
+  top: -79px;
+  height: 80px;
   width: 100%;
   min-height: 80px;
   background-color:#FF5C5C;
   animation: wavy 3s ease-in-out infinite;
 }
 
-.wave-block:hover {
-  height: 78vh;
+.wave-stretch:hover {
+  height: 79vh;
+  min-height: 640px;
 }
 
   @keyframes wavy {
