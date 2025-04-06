@@ -25,7 +25,7 @@
   justify-items: center; 
   gap:20px;
   padding: 0px 7%;
-  z-index: 2;
+  z-index: 3;
 }
 
 .logo-container {
@@ -40,13 +40,19 @@
   letter-spacing: -0.5px;
 }
 
+.task-container {
+  font-family: system-ui, sans-serif;
+  position: relative;
+  color: #fff;
+}
+
 .task-button {
   width: 240px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #000;
-  opacity: 54%;
+  background-color: rgba(0,0,0,0.54);
+  outline: 1px solid #fff;
   color: white;
   border: none;
   border-radius: 5px;
@@ -68,6 +74,49 @@
 
 .task-button > .dropdown-arrow {
   font-size: 12px;
+}
+
+.task-list {
+  outline: 1px solid #fff;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0,0,0,0.54);
+  border-radius: 5px;
+  margin-top: 5px;
+  display: block;
+  list-style: none;
+}
+
+.task-container:hover .task-list {
+  display: block;
+}
+
+.task-item {
+  position: relative;
+  font-weight: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.task-item:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.task-item.add-task {
+  border-top: 1px solid #fff;
+}
+
+.task-cancel {
+  position: absolute;
+  right: 10px;
+  font-weight: 250;
+  font-stretch: 150%;
 }
 
 .nav-lists {
@@ -223,7 +272,7 @@
 .wave-stretch {
   width: 100%;
   position: absolute;
-  height: 5vh;
+  height: 79vh;
   min-height: 40px;
   bottom: 0;
   background-color: aliceblue;
