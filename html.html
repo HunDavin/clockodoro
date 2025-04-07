@@ -6,7 +6,7 @@
   <title>Clockodoro</title>
   <link rel="stylesheet" href="src/index.css">
 </head>
-<body>
+<body class="popup-active">
   <div class="app-container" style="background-color: #FFF3E2">
     <header class="header">
       <div class="logo-container">
@@ -104,6 +104,120 @@
         <div class="wavy-wave"></div>
       </div>
     </footer>
+    <div class="popup-overlay active"></div>
+    <div class="options-popup">
+      <div class="options-header">
+        <h2>Options</h2>
+        <button class="close-button">×</button>
+      </div>
+      
+      <div class="options-content">
+        <div class="option-section">
+          <h3>Time (Minutes)</h3>
+          <div class="time-inputs">
+            <div class="time-input">
+              <label>Pomodoro</label>
+              <input type="text" value="25" class="time-field">
+            </div>
+            <div class="time-input">
+              <label>Short Break</label>
+              <input type="text" value="5" class="time-field">
+            </div>
+            <div class="time-input">
+              <label>Long Break</label>
+              <input type="text" value="15" class="time-field">
+            </div>
+          </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="option-section toggle-section">
+          <div class="toggle-label">Auto Start Break</div>
+          <label class="toggle">
+            <input type="checkbox">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="option-section toggle-section">
+          <div class="toggle-label">Auto Start Focus</div>
+          <label class="toggle">
+            <input type="checkbox">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="option-section">
+          <div class="interval-section">
+            <div class="interval-label">Long Break Interval</div>
+            <input type="text" value="4" class="interval-field">
+          </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="option-section">
+          <h3>Alarm Sound</h3>
+          <div class="sound-section">
+            <div class="sound-row">
+              <div class="sound-column">
+                <label>Sound</label>
+                <div class="select-wrapper">
+                  <select class="sound-select">
+                    <option selected>Ding</option>
+                  </select>
+                </div>
+              </div>
+              <div class="sound-column">
+                <label>Repeat</label>
+                <input type="text" value="4" class="repeat-field">
+              </div>
+            </div>
+            <div class="volume-row">
+              <label>Volume</label>
+              <div class="volume-control">
+                <input type="range" min="0" max="100" value="50" class="volume-slider">
+                <span class="volume-value">50</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="option-section">
+          <h3>Ticking Sound</h3>
+          <div class="sound-section">
+            <div class="sound-row">
+              <div class="sound-column full-width">
+                <label>Sound</label>
+                <div class="select-wrapper">
+                  <select class="sound-select">
+                    <option selected>Rain</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="volume-row">
+              <label>Volume</label>
+              <div class="volume-control">
+                <input type="range" min="0" max="100" value="50" class="volume-slider">
+                <span class="volume-value">50</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="done-section">
+          <button class="done-button">Done</button>
+        </div>
+      </div>
+    </div>
   </div>
 </body>
 </html>
