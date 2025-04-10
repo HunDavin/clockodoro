@@ -1,0 +1,81 @@
+.task-container {
+  font-family: system-ui, sans-serif;
+  position: relative;
+  color: #fff;
+}
+
+.task-button {
+  width: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(0,0,0,0.54);
+  outline: 1px solid #fff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.task-button > .check-icon {
+  padding: 4px 6px;
+  border-radius: 50%;
+  border: 1px solid #fff;
+  font-size: 12px;
+}
+
+.task-button > .task-text {
+  font-weight: 200;
+}
+
+.task-button > .dropdown-arrow {
+  font-size: 12px;
+}
+
+.task-list {
+  outline: 1px solid #fff;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0,0,0,0.54);
+  border-radius: 5px;
+  margin-top: 5px;
+  display: block;
+  list-style: none;
+}
+
+.task-divider {
+    width:80%;
+    height: 1px;
+    background-color: #fff;
+    margin: 1px auto;
+}
+
+.task-container:hover .task-list {
+  display: block;
+}
+
+.task-item {
+  position: relative;
+  font-weight: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.task-item:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.task-cancel {
+  position: absolute;
+  right: 10px;
+  font-weight: 250;
+  font-stretch: 150%;
+}

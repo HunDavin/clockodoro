@@ -1,0 +1,40 @@
+.wave-block {
+  width: 100%;
+  min-height: 100px;
+  z-index: 1;
+  background-color: #FFF3E2;
+}
+
+.wave-stretch {
+  width: 100%;
+  position: absolute;
+  height: 5vh;
+  min-height: 28px;
+  bottom: 0;
+  background-color: aliceblue;
+  transition: height 1s, min-height 1s;
+  z-index: 0;
+}
+
+.wavy-wave {
+  position: absolute;
+  top: -79px;
+  height: 80px;
+  width: 100%;
+  background-color:#FF5C5C;
+  animation: wavy 3s ease-in-out infinite;
+}
+
+.wave-stretch:hover {
+  height: 80vh;
+  min-height: 555px;
+}
+
+  @keyframes wavy {
+  0%,100% {
+    clip-path: polygon(0 25%, 10% 15%, 26% 5%, 43% 5%, 55% 10%, 68% 15%, 80% 20%, 91% 20%, 100% 10%, 100% 100%, 0 100%);
+  }
+  50% {
+    clip-path: polygon(0 10%, 11% 20%, 24% 20%, 39% 15%, 53% 10%, 63% 5%, 76% 5%, 90% 15%, 100% 25%, 100% 100%, 0 100%);
+  }
+}

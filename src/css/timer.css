@@ -1,0 +1,114 @@
+.timer-section {
+  position: relative;
+  height:76vh;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding:0px 0px 50px;
+  z-index: 2;
+}
+
+.timer-title {
+  font-size: 20px;
+  font-weight: 500;
+  color: #000;
+  opacity: 37%;
+}
+
+.timer-display {
+  font-family: 'Rowdies', sans-serif;
+  font-size: 220px;
+  color: #333;
+}
+
+.separator {
+  margin: 0 -40px;
+}
+
+.clock-icons {
+  background-color: #000;
+  opacity: 6%;
+  display: flex;
+  padding:5px 10px;
+  border-radius: 25px;
+}
+
+.controls-container {
+  display: flex;
+  gap: 15px;
+}
+
+.mode-button {
+  width: 190px;
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.mode-button.active {
+  transform: translateY(-2px);
+}
+
+.mode-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mode-name {
+  font-weight: 500;
+}
+
+.sound-icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.mode-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mode-icon {
+  width: 25px;
+  height: 25px;
+}
+
+.mode-time-display {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mode-minutes {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.min-label {
+  font-size: 16px;
+}
+
+.start-button {
+  width: 125px;
+  margin-left: 10px;
+  color: white;
+  background-color: #000;
+  opacity: 54%;
+  border: none;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
