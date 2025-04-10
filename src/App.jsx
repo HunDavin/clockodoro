@@ -4,18 +4,44 @@ import sound from "./assets/Sound.png";
 import noSound from "./assets/noSound.png";
 import { modes } from "./data";
 import Header from "./components/Header";
+import OptionPopup from "./components/OptionPopup";
+
+
+
 
 function final_app(){
+
+  const [mode,setmode]=useState([...modes]);
+  const [TimeOption,setTimeOption]=useState(false);
+  
+ 
     function navclicked(message){
       message === "time" ? console.log("time"): message === "report"? console.log("report") : null
+      message === "time" ? setTimeOption(true): setTimeOption(false);
     }
 
+    function closeOptionPopUp(timer){
+      timer ? setTimeOption(false) : null; 
+    }
 
-
+    function handleOptionPopup(focus,longBreak,shortBreak){
+      const updateMode = mode.map((m)=>{
+        if (m.mode === "Focus") m.minutes = focus;
+        if (m.mode === "Short Break") m.minutes =shortBreak;
+        if (m.mode === "Long Break") m.minutes = longBreak;
+        return m;
+      })
+      setmode(updateMode);
+    }
+    console.log(mode);
   return (
-    <div className="app_container">
+
+    <div className={`app_container`}>
       <Header func={navclicked}/>
-    
+      {TimeOption && <OptionPopup CloseToggle={closeOptionPopUp} FormOutput={handleOptionPopup}/> }
+      
+
+
     </div>
 
 
