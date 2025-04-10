@@ -3,6 +3,47 @@ import logo from "./assets/Clockodoro.png";
 import sound from "./assets/Sound.png";
 import noSound from "./assets/noSound.png";
 import { modes } from "./data";
+import Header from "./components/Header";
+
+function final_app(){
+    function navclicked(message){
+      message === "time" ? console.log("time"): message === "report"? console.log("report") : null
+    }
+
+
+
+  return (
+    <div className="app_container">
+      <Header func={navclicked}/>
+    
+    </div>
+
+
+  )
+
+
+
+
+
+}
+
+
+
+
+export default final_app;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function App() {
   const [timeLeft, setTimeLeft] = useState(25 * 60);
@@ -125,5 +166,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
