@@ -1,4 +1,5 @@
 import logo from "../assets/Clockodoro.png"
+import Task from "./Task"
 
 
 
@@ -10,20 +11,7 @@ export default function Header({func}) {
                     <span className="logo-text">Clockodoro</span>
             </div>
 
-            <div className="task-container">
-                <button className="task-button">
-                    <span className="check-icon">✓</span>
-                    <span className="task-text">Add Task</span>
-                    <span className="dropdown-arrow">▼</span>
-                </button>
-
-                <ul className="task-list">
-                    <li className="task-item">Homework<span className="task-cancel">&minus;</span></li>
-                    <li className="task-item">Other<span className="task-cancel">&minus;</span></li>
-                    <li className="task-divider"></li>
-                    <li className="task-item add-task">Add Task</li>
-                </ul>
-            </div>
+            <Task />
 
             <ul className="nav-lists">
                 <li className="nav-list" onClick={()=>func("time")}>Timer Option</li>
