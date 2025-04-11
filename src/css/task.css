@@ -79,3 +79,48 @@
   font-weight: 250;
   font-stretch: 150%;
 }
+
+.add-task {
+  background-color: transparent;
+  border: 0;
+  color: #fff;
+  height: 40px; 
+  width: 100%;   
+  padding: 0 10px; 
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  text-align: center; 
+}
+
+.add-task::placeholder {
+  color: #fff;
+  font-weight: 250;
+  font-stretch: 150%;
+}
+
+.add-task:hover {
+  background: transparent;
+}
+
+.add-task:focus {
+  outline: none;
+}
+.add-task:focus::placeholder {
+  opacity: 0;
+}
+.add-task-btn {
+  background-color: transparent;
+  color: #fff;
+  border: 0px;
+  padding: 2px 5px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  margin-left: 10px;
+}
+
+.add-task-btn:hover {
+  border: 2px solid #bfbaba;
+  color: #fff;
+}
