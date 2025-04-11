@@ -29,6 +29,7 @@ export default function OptionPopup({CloseToggle,FormOutput,modeData}) {
     const handleSubmit = (e) =>{
         e.preventDefault();
         FormOutput(Focus,LBreak,SBreak);
+        CloseToggle(true)
     }
 
     return (
@@ -143,7 +144,7 @@ export default function OptionPopup({CloseToggle,FormOutput,modeData}) {
                     </div>
 
                     <div className="done-section">
-                        <button className="done-button" type="submit" onClick={()=>CloseToggle(true)}>Done</button>
+                        <button className="done-button" type="submit" onClick={handleSubmit}>Done</button>
                     </div>
                 </div>
             </form>
