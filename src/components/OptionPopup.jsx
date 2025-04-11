@@ -2,16 +2,24 @@ import { useState } from "react"
 
 
 
-export default function OptionPopup({CloseToggle,FormOutput}) {
-    const[Focus,setFocus]=useState(25);
-    const[SBreak,setSBreak]=useState(5);
-    const[LBreak,setLBreak]=useState(30);
+export default function OptionPopup({CloseToggle,FormOutput,modeData}) {
+    
+
+
+    const FocusDuration = modeData[modeData.findIndex((m)=>m.mode==="Focus")].minutes;
+    const LbreakDuration = modeData[modeData.findIndex((m)=>m.mode==="Short Break")].minutes;
+    const ShortDuration = modeData[modeData.findIndex((m)=>m.mode==="Long Break")].minutes;
+
+    const[Focus,setFocus]=useState(FocusDuration);
+    const[SBreak,setSBreak]=useState(ShortDuration);
+    const[LBreak,setLBreak]=useState(LbreakDuration);
 
 
 
     const handleSubmit = (e) =>{
         e.preventDefault();
         FormOutput(Focus,LBreak,SBreak);
+        CloseToggle(true);
     }
 
     return (
