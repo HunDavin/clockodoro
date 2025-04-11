@@ -11,6 +11,7 @@ export default function Timer({ modeData }) {
         }
     },[modeData]);
 
+    
 
 
     const [timeLeft, setTimeLeft] = useState(duration * 60);
@@ -40,7 +41,7 @@ export default function Timer({ modeData }) {
     useEffect(()=>{
         setTimeLeft(duration*60);
         setIsRunning(false);
-    },[ActiveMode])
+    },[ActiveMode,modeData])
 
 
     function ModeBtn({ mode }) {
@@ -55,7 +56,7 @@ export default function Timer({ modeData }) {
 
                 <div className="mode-content">
                     <img className="mode-icon" src={mode.icon} alt="Short Break" />
-                    <div className="mode-time-display" style={{ color: "#333" }}>
+                    <div className="mode-time-display" style={{ color: isActive? "white" : "#333" }}>
                         <span className="mode-minutes">{mode.minutes}</span>
                         <span className="min-label">min</span>
                     </div>
