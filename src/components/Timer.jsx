@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react"
 
-export default function Timer({ modeData }) {
+export default function Timer({ modeData,activeIndex }) {
     const [ActiveMode, setActiveMode] = useState(modeData[0]);
     const duration = ActiveMode.minutes;
+
+
+    
+
 
     useEffect(()=>{
         const Active = modeData.find((m)=>m.mode === ActiveMode.mode)
@@ -11,7 +15,7 @@ export default function Timer({ modeData }) {
         }
     },[modeData]);
 
-    
+
 
 
     const [timeLeft, setTimeLeft] = useState(duration * 60);
@@ -41,6 +45,7 @@ export default function Timer({ modeData }) {
     useEffect(()=>{
         setTimeLeft(duration*60);
         setIsRunning(false);
+        activeIndex(modeData.findIndex((m)=>m.mode===ActiveMode.mode))
     },[ActiveMode,modeData])
 
 

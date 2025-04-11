@@ -14,7 +14,7 @@ function final_app(){
 
   const [mode,setmode]=useState([...modes]);
   const [TimeOption,setTimeOption]=useState(false);
-  
+  const [modeIndex,setmodeIndex] = useState(0);
  
     function navclicked(message){
       message === "time" ? console.log("time"): message === "report"? console.log("report") : null
@@ -35,13 +35,27 @@ function final_app(){
       setmode(updateMode);
     }
     console.log(mode);
+
+    function getIndexofActive(index){
+      setmodeIndex(index);
+    }
+
+    useEffect(()=>{
+      document.body.style.backgroundColor = mode[modeIndex].background;
+
+    },[modeIndex])
+
+
+
+
+
   return (
 
     <div className={`app_container`}>
       <Header func={navclicked}/>
       {TimeOption && <OptionPopup CloseToggle={closeOptionPopUp} FormOutput={handleOptionPopup} modeData={mode}/> }
       <main className="timer-section">
-        <Timer modeData={mode}/>
+        <Timer modeData={mode} activeIndex={getIndexofActive}/>
       </main>
 
 
