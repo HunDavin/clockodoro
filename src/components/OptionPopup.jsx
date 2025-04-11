@@ -14,12 +14,21 @@ export default function OptionPopup({CloseToggle,FormOutput,modeData}) {
     const[SBreak,setSBreak]=useState(SBreakDuration);
     const[LBreak,setLBreak]=useState(LBreakDuration);
 
+    const [volume1,setvolume1]=useState(50);
+    const [volume2,setvolume2]=useState(50);
+
+    const slider1 ={
+         background: `linear-gradient(to right, #FF5C5C 0%, #FF5C5C ${volume1}%, #ddd ${volume1}%, #ddd 100%)`
+    }
+    const slider2 ={
+        background: `linear-gradient(to right, #FF5C5C 0%, #FF5C5C ${volume2}%, #ddd ${volume2}%, #ddd 100%)`
+   }
+
 
 
     const handleSubmit = (e) =>{
         e.preventDefault();
         FormOutput(Focus,LBreak,SBreak);
-        CloseToggle(true);
     }
 
     return (
@@ -101,8 +110,8 @@ export default function OptionPopup({CloseToggle,FormOutput,modeData}) {
                             <div className="volume-row">
                                 <label>Volume</label>
                                 <div className="volume-control">
-                                    <input type="range" min="0" max="100" value="50" className="volume-slider" />
-                                    <span className="volume-value">50</span>
+                                    <input type="range" min="0" max="100" style={slider1} value={volume1} onChange={(e)=>setvolume1(e.target.value)} className="volume-slider" />
+                                    <span className="volume-value">{volume1}</span>
                                 </div>
                             </div>
                         </div>
@@ -126,15 +135,15 @@ export default function OptionPopup({CloseToggle,FormOutput,modeData}) {
                             <div className="volume-row">
                                 <label>Volume</label>
                                 <div className="volume-control">
-                                    <input type="range" min="0" max="100" value="50" className="volume-slider" />
-                                    <span className="volume-value">50</span>
+                                    <input type="range" min="0" max="100" style={slider2} value={volume2} onChange={(e)=>setvolume2(e.target.value)} className="volume-slider" />
+                                    <span className="volume-value">{volume2}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="done-section">
-                        <button className="done-button" type="submit" onClick={handleSubmit}>Done</button>
+                        <button className="done-button" type="submit" onClick={()=>CloseToggle(true)}>Done</button>
                     </div>
                 </div>
             </form>
