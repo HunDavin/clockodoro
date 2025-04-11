@@ -5,6 +5,7 @@ import noSound from "./assets/noSound.png";
 import { modes } from "./data";
 import Header from "./components/Header";
 import OptionPopup from "./components/OptionPopup";
+import Timer from "./components/Timer";
 
 
 
@@ -38,8 +39,10 @@ function final_app(){
 
     <div className={`app_container`}>
       <Header func={navclicked}/>
-      {TimeOption && <OptionPopup CloseToggle={closeOptionPopUp} FormOutput={handleOptionPopup}/> }
-      
+      {TimeOption && <OptionPopup CloseToggle={closeOptionPopUp} FormOutput={handleOptionPopup} modeData={mode}/> }
+      <main className="timer-section">
+        <Timer modeData={mode}/>
+      </main>
 
 
     </div>
