@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { modes } from "./data";
 import Header from "./components/Header";
-import OptionPopup from "./components/OptionPopup";
 import Timer from "./components/Timer";
 import Wave from "./components/Wave";
+import OptionPopup from "./components/OptionPopup";
 
 function App() {
   const [mode, setMode] = useState([...modes]);
@@ -31,15 +31,11 @@ function App() {
     document.body.classList.remove('popup-active');
   }
 
-  useEffect(() => {
-    document.body.style.backgroundColor = mode[modeIndex].background;
-  }, [modeIndex, mode]);
-
   return (
     <div className="app-container">
       <Header onTimer={turnOnTimeOption} />
       <Timer modeData={mode} onModeChange={setModeIndex}/>
-      <Wave />
+      <Wave activeMode={mode[modeIndex]} />
       {showTimeOption && <OptionPopup onClose={turnOffTimeOption} onUpdate={handleOptionUpdate} modeData={mode}/>}
     </div>
   );
