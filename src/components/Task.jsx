@@ -1,44 +1,71 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react";
 
 export default function Task() {
-    const [task,setTask] =useState(["HomeWork","Other"]);
+  const [tasks, setTasks] = useState(["HomeWork", "Other"]);
+  const [selectedTask, setSelectedTask] = useState("Choose Task");
+  const [newTaskInput, setNewTaskInput] = useState("");
+  const [showTaskList, setShowTaskList] = useState(false);
+  const taskRef = useRef(null);
 
+  const handleAddTask = () => {
+    if (newTaskInput.trim() === "") return;
+    setTasks(prev => [newTaskInput, ...prev]);
+    setNewTaskInput("");
+  };
+  
+  const handleRemoveTask = (taskToRemove, e) => {
+    e.stopPropagation();
+    setTasks(prev => prev.filter(task => task !== taskToRemove));
+  };
 
+  const handleTaskSelect = (task) => {
+    setSelectedTask(task);
+    setShowTaskList(false);
+  };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (taskRef.current && !taskRef.current.contains(event.target)) {
+        setShowTaskList(false);
+      }
+    };
 
-    const[TaskSelect,setTaskSelect] = useState("Choose Task");
-    const[TaskInput,setTaskInput] = useState("");
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-    const handleInput =()=>{
-        setTask((prev)=>[TaskInput,...prev]);
-        setTaskInput("");
-    }
-    
+  return (
+    <div className="task-container" ref={taskRef}>
+      <button className="task-button" onClick={() => setShowTaskList(prev => !prev)}>
+        <span className="check-icon">✓</span>
+        <span className="task-text">{selectedTask}</span>
+        <span className="dropdown-arrow">▼</span>
+      </button>
 
-    return (<>
-        <div className="task-container">
-            <button className="task-button">
-                <span className="check-icon">✓</span>
-                <span className="task-text">{TaskSelect}</span>
-                <span className="dropdown-arrow">▼</span>
-            </button>
-
-            <ul className="task-list">
-                {task.map((t)=>(
-                <li className="task-item" onClick={()=>setTaskSelect(t)} >{t}<span className="task-cancel">&minus;</span></li>
-                ))}
-                <li className="task-divider"></li>
-                <li className="task-item">
-                    <input className="task-item add-task" type="text" placeholder="Add Task" onChange={(e)=>setTaskInput(e.target.value)} />
-                    <button className="add-task-btn" onClick={handleInput}>Add</button>
-                </li>
-            </ul>
-        </div>
-
-
-    </>)
-
-
-
-
+      {showTaskList && (
+        <ul className="task-list">
+          {tasks.map((task, index) => (
+            <li key={index} className="task-item" onClick={() => handleTaskSelect(task)}>
+              {task}
+              <span className="task-cancel" onClick={(e) => handleRemoveTask(task, e)}>
+                &minus;
+              </span>
+            </li>
+          ))}
+          <li className="task-divider"></li>
+          <li className="task-item add-task">
+            <input 
+              className="task-input"
+              type="text" 
+              placeholder="Add Task" 
+              value={newTaskInput}
+              onChange={(e) => setNewTaskInput(e.target.value)} 
+              onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
+            />
+            <button className="task-input-btn" onClick={handleAddTask}>&#43;</button>
+          </li>
+        </ul>
+      )}
+    </div>
+  );
 }

@@ -53,7 +53,7 @@
 
 .mode-button.active {
   transform: translateY(-2px);
-  border: #000 1px solid;
+  border: #fff 1px solid;
 }
 
 .mode-header {

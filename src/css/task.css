@@ -43,7 +43,6 @@
   background-color: rgba(0,0,0,0.54);
   border-radius: 5px;
   margin-top: 5px;
-  display: none;
   list-style: none;
 }
 
@@ -52,10 +51,6 @@
     height: 1px;
     background-color: #fff;
     margin: 1px auto;
-}
-
-.task-container:hover .task-list {
-  display: block;
 }
 
 .task-item {
@@ -80,47 +75,42 @@
   font-stretch: 150%;
 }
 
-.add-task {
+.task-input {
+  font-family: system-ui, sans-serif;
   background-color: transparent;
-  border: 0;
+  font-size: 16px;
+  font-weight: 200;
+  border: none;
   color: #fff;
-  height: 40px; 
   width: 100%;   
-  padding: 0 10px; 
   display: flex;
   justify-content: center; 
   align-items: center; 
-  text-align: center; 
+  text-align: center;
 }
 
-.add-task::placeholder {
-  color: #fff;
-  font-weight: 250;
-  font-stretch: 150%;
-}
-
-.add-task:hover {
+.task-input:hover {
   background: transparent;
 }
 
-.add-task:focus {
+.task-input:focus {
   outline: none;
 }
-.add-task:focus::placeholder {
+
+.task-input:focus::placeholder {
   opacity: 0;
 }
-.add-task-btn {
+
+.task-input-btn {
   background-color: transparent;
   color: #fff;
   border: 0px;
-  padding: 2px 5px;
   font-size: 16px;
   cursor: pointer;
   border-radius: 8px;
   margin-left: 10px;
-}
-
-.add-task-btn:hover {
-  border: 2px solid #bfbaba;
-  color: #fff;
+  position: absolute;
+  right: 10px;
+  font-weight: 250;
+  font-stretch: 150%;
 }

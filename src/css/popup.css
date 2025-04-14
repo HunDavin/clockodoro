@@ -120,6 +120,12 @@ body.popup-active {
   font-size: 18px;
 }
 
+.time-field::-webkit-inner-spin-button,
+.time-field::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .divider {
   height: 1px;
   background-color: #f0f0f0;
