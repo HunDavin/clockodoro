@@ -28,11 +28,8 @@ function App() {
   return (
     <div className="app-container">
       <Header onTimer={turnOnTimeOption} />
-
       <Timer modeData={mode} onModeChange={setModeIndex}/>
-
-      {showTimeOption && (
-        <OptionPopup onClose={turnOffTimeOption} onUpdate={handleOptionUpdate} modeData={mode}/>)}
+      {showTimeOption && <OptionPopup onClose={turnOffTimeOption} onUpdate={handleOptionUpdate} modeData={mode}/>}
     </div>
   );
 }
