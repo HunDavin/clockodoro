@@ -11,7 +11,7 @@
   height: 5vh;
   min-height: 28px;
   bottom: 0;
-  background-color: aliceblue;
+  background-color: #FF5C5C;
   transition: height 1s, min-height 1s;
   z-index: 0;
 }

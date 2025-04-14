@@ -120,8 +120,8 @@ body.popup-active {
   font-size: 18px;
 }
 
-.time-field::-webkit-inner-spin-button,
-.time-field::-webkit-outer-spin-button {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
