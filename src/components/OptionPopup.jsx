@@ -71,15 +71,15 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
             <div className="time-inputs">
               <div className="time-input">
                 <label>Pomodoro</label>
-                <input type="number" className="time-field" onChange={(e) => setFocus(Number(e.target.value))} value={focus} min="1" />
+                <input type="number" className="time-field" onChange={(e) => setFocus(Number(e.target.value))} value={focus} min="0" />
               </div>
               <div className="time-input">
                 <label>Short Break</label>
-                <input type="number" value={shortBreak} className="time-field" onChange={(e) => setShortBreak(Number(e.target.value))} min="1" />
+                <input type="number" value={shortBreak} className="time-field" onChange={(e) => setShortBreak(Number(e.target.value))} min="0" />
               </div>
               <div className="time-input">
                 <label>Long Break</label>
-                <input type="number" value={longBreak} className="time-field" onChange={(e) => setLongBreak(Number(e.target.value))} min="1" />
+                <input type="number" value={longBreak} className="time-field" onChange={(e) => setLongBreak(Number(e.target.value))} min="0" />
               </div>
             </div>
           </div>

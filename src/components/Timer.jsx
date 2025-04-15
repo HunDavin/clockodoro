@@ -3,6 +3,8 @@ import clockIcon from "../assets/Clockicon.png";
 // Import your audio files
 import tickSound from "../assets/tick.mp3";
 import alarmSound from "../assets/alarm.mp3";
+// Import the new TimerCompletedPopup component
+import TimerCompletedPopup from "./TimerCompletedPopup";
 
 export default function Timer({ modeData, onModeChange }) {
   const [activeMode, setActiveMode] = useState(modeData[0]);
@@ -11,6 +13,9 @@ export default function Timer({ modeData, onModeChange }) {
   // References for audio elements
   const tickingRef = useRef(new Audio(tickSound));
   const alarmRef = useRef(new Audio(alarmSound));
+  // Add state for timer completion popup
+  const [showTimerCompletedPopup, setShowTimerCompletedPopup] = useState(false);
+  
   // Audio settings from localStorage or defaults
   const [tickingVolume, setTickingVolume] = useState(() => {
     return localStorage.getItem("tickingVolume") ? 
@@ -38,7 +43,6 @@ export default function Timer({ modeData, onModeChange }) {
     if (currentMode) {
       setActiveMode(currentMode);
       setTimeLeft(currentMode.minutes * 60);
-      setIsRunning(false);
     }
   }, [modeData, activeMode.mode]);
   
@@ -74,9 +78,12 @@ export default function Timer({ modeData, onModeChange }) {
     }
     
     // Start ticking sound when timer starts
+    let tickingTimeout;
     if (tickingVolume > 0) {
-      tickingRef.current.loop = true;
-      tickingRef.current.play().catch(e => console.log("Audio play failed:", e));
+      tickingTimeout = setTimeout(() => {
+        tickingRef.current.loop = true;
+        tickingRef.current.play().catch(e => console.log("Audio play failed:", e));
+      }, 500);
     }
     
     const interval = setInterval(() => {
@@ -91,6 +98,9 @@ export default function Timer({ modeData, onModeChange }) {
             playAlarmWithRepeats(alarmRepeats);
           }
           
+          // Show the timer completed popup instead of just resetting
+          setShowTimerCompletedPopup(true);
+          
           return 0;
         }
         return prev - 1;
@@ -103,11 +113,12 @@ export default function Timer({ modeData, onModeChange }) {
     };
   }, [isRunning, tickingVolume, alarmVolume, alarmRepeats]);
   
-  // Play alarm with repeats
+  let playAlarm; // Declare outside so it can be referenced globally
+
   const playAlarmWithRepeats = (repeats) => {
     let count = 0;
-    
-    const playAlarm = () => {
+
+    playAlarm = () => {
       if (count < repeats) {
         alarmRef.current.currentTime = 0;
         alarmRef.current.play().catch(e => console.log("Alarm play failed:", e));
@@ -116,10 +127,19 @@ export default function Timer({ modeData, onModeChange }) {
         alarmRef.current.removeEventListener('ended', playAlarm);
       }
     };
-    
+
     alarmRef.current.addEventListener('ended', playAlarm);
-    playAlarm(); // Play the first time
+    playAlarm(); // Start the first alarm
   };
+
+  const stopAlarmPlayback = () => {
+    alarmRef.current.pause();
+    alarmRef.current.currentTime = 0;
+    if (playAlarm) {
+      alarmRef.current.removeEventListener('ended', playAlarm);
+    }
+  };
+
   
   useEffect(() => {
     const index = modeData.findIndex(m => m.mode === activeMode.mode);
@@ -127,6 +147,57 @@ export default function Timer({ modeData, onModeChange }) {
       onModeChange(index);
     }
   }, [activeMode, modeData, onModeChange]);
+
+  // Function to handle starting the next timer
+  const handleStartNext = () => {
+    stopAlarmPlayback();
+    // Determine which mode to switch to
+    let nextModeIndex;
+    if (activeMode.mode === "Focus") {
+      // After Focus, go to Short Break
+      nextModeIndex = modeData.findIndex(m => m.mode === "Short Break");
+    } else {
+      // After any break, go to Focus
+      nextModeIndex = modeData.findIndex(m => m.mode === "Focus");
+    }
+    
+    if (nextModeIndex !== -1) {
+      // First close the popup
+      setShowTimerCompletedPopup(false);
+      
+      // Set the new active mode and reset the timer
+      const nextMode = modeData[nextModeIndex];
+      setActiveMode(nextMode);
+      setTimeLeft(nextMode.minutes * 60);
+      
+      // Important: Add a small delay before starting the timer
+      // This ensures state updates have completed
+      setTimeout(() => {
+        setIsRunning(true);
+      }, 100);
+    }
+  };
+
+  // Function to handle stopping the timer
+  const handleStop = () => {
+    stopAlarmPlayback();
+    setShowTimerCompletedPopup(false);
+    // Timer is already stopped, just close the popup
+  };
+
+  // Function to manually toggle the timer
+  const toggleTimer = () => {
+    setIsRunning(!isRunning);
+  };
+
+  // Function to handle mode selection
+  const handleModeSelect = (mode) => {
+    setActiveMode(mode);
+    setTimeLeft(mode.minutes * 60);
+    setIsRunning(false);
+  };
+
+  
 
   return (
     <main className="timer-section">
@@ -146,7 +217,15 @@ export default function Timer({ modeData, onModeChange }) {
         {modeData.map((mode) => {
           const isActive = activeMode.mode === mode.mode;
           return (
-            <div key={mode.id} className={`mode-button ${isActive ? "active" : ""}`} style={{ backgroundColor: isActive ? mode.btnColor : "white", color: isActive ? "white" : "#333" }} onClick={() => setActiveMode(mode)}>
+            <div 
+              key={mode.id} 
+              className={`mode-button ${isActive ? "active" : ""}`} 
+              style={{ 
+                backgroundColor: isActive ? mode.btnColor : "white", 
+                color: isActive ? "white" : "#333" 
+              }} 
+              onClick={() => handleModeSelect(mode)}
+            >
               <div className="mode-header">
                 <span className="mode-name">{mode.mode}</span>
               </div>
@@ -160,10 +239,22 @@ export default function Timer({ modeData, onModeChange }) {
             </div>
           );
         })}
-        <div className="start-button" onClick={() => setIsRunning(!isRunning)}>
+        <div className="start-button" onClick={toggleTimer}>
           {isRunning ? "PAUSE" : "START"}
         </div>
       </div>
+      
+      {/* Add the timer completed popup */}
+      <TimerCompletedPopup 
+        visible={showTimerCompletedPopup} 
+        onClose={() => {
+          stopAlarmPlayback();
+          setShowTimerCompletedPopup(false);
+        }}
+        mode={activeMode.mode}
+        onStartNext={handleStartNext}
+        onStop={handleStop}
+      />
     </main>
   );
 }

@@ -1,0 +1,124 @@
+/* Add these styles to the existing task-completed.css file or create a new CSS file */
+
+.timer-completed-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    animation: fade-in 0.3s ease-out;
+  }
+  
+  .timer-completed-content {
+    display: flex;
+    flex-direction: column;
+    background-color: #FF5C5C;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    min-width: 350px;
+  }
+  
+  .timer-completed-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 48px;
+    height: 48px;
+    background-color: white;
+    border-radius: 50%;
+    font-size: 24px;
+    margin: 0 auto 16px;
+  }
+  
+  .timer-completed-message {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .timer-completed-title {
+    font-weight: 600;
+    margin: 0;
+    font-size: 20px;
+  }
+  
+  .timer-completed-name {
+    margin: 8px 0 0;
+    font-size: 16px;
+    opacity: 0.9;
+  }
+  
+  .timer-completed-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .timer-completed-action-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .timer-completed-action-btn.continue {
+    background-color: white;
+    color: #333;
+  }
+  
+  .timer-completed-action-btn.continue:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .timer-completed-action-btn.stop {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+  
+  .timer-completed-action-btn.stop:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .timer-completed-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+  }
+  
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* Add overlay for the timer popup */
+  .timer-completed-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    animation: fade-in 0.3s ease-out;
+  }
