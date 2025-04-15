@@ -3,7 +3,7 @@ import clockIcon from "../assets/Clockicon.png";
 // Import your audio files
 import tickSound from "../assets/tick.mp3";
 import alarmSound from "../assets/alarm.mp3";
-// Import the new TimerCompletedPopup component
+// Import the TimerCompletedPopup component
 import TimerCompletedPopup from "./TimerCompletedPopup";
 
 export default function Timer({ modeData, onModeChange }) {
@@ -33,6 +33,15 @@ export default function Timer({ modeData, onModeChange }) {
       4;
   });
   
+  // Add auto-start settings
+  const [autoStartBreak, setAutoStartBreak] = useState(() => {
+    return localStorage.getItem("autoStartBreak") === "true";
+  });
+  
+  const [autoStartFocus, setAutoStartFocus] = useState(() => {
+    return localStorage.getItem("autoStartFocus") === "true";
+  });
+  
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
   const formatTime = (value) => (value < 10 ? `0${value}` : value);
@@ -46,27 +55,33 @@ export default function Timer({ modeData, onModeChange }) {
     }
   }, [modeData, activeMode.mode]);
   
-  // Update volume when settings change
+  // Update volume and settings when they change
   useEffect(() => {
     tickingRef.current.volume = tickingVolume;
     alarmRef.current.volume = alarmVolume;
     
     // Load settings from localStorage
-    window.addEventListener('storage', () => {
+    const handleStorageChange = () => {
       const newTickingVolume = localStorage.getItem("tickingVolume") ?
         parseInt(localStorage.getItem("tickingVolume")) / 100 : 0.5;
       const newAlarmVolume = localStorage.getItem("alarmVolume") ?
         parseInt(localStorage.getItem("alarmVolume")) / 100 : 0.5;
       const newAlarmRepeats = localStorage.getItem("alarmRepeats") ?
         parseInt(localStorage.getItem("alarmRepeats")) : 4;
+      const newAutoStartBreak = localStorage.getItem("autoStartBreak") === "true";
+      const newAutoStartFocus = localStorage.getItem("autoStartFocus") === "true";
       
       setTickingVolume(newTickingVolume);
       setAlarmVolume(newAlarmVolume);
       setAlarmRepeats(newAlarmRepeats);
-    });
+      setAutoStartBreak(newAutoStartBreak);
+      setAutoStartFocus(newAutoStartFocus);
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
     
     return () => {
-      window.removeEventListener('storage', () => {});
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, [tickingVolume, alarmVolume]);
   
@@ -98,8 +113,17 @@ export default function Timer({ modeData, onModeChange }) {
             playAlarmWithRepeats(alarmRepeats);
           }
           
-          // Show the timer completed popup instead of just resetting
-          setShowTimerCompletedPopup(true);
+          // Determine what to do when timer ends
+          if (activeMode.mode === "Focus" && autoStartBreak) {
+            // Auto start break - don't show popup, start break immediately
+            handleAutoStartNextTimer();
+          } else if ((activeMode.mode === "Short Break" || activeMode.mode === "Long Break") && autoStartFocus) {
+            // Auto start focus - don't show popup, start focus immediately
+            handleAutoStartNextTimer();
+          } else {
+            // No auto-start enabled, show the timer completed popup
+            setShowTimerCompletedPopup(true);
+          }
           
           return 0;
         }
@@ -109,9 +133,10 @@ export default function Timer({ modeData, onModeChange }) {
     
     return () => {
       clearInterval(interval);
+      clearTimeout(tickingTimeout);
       tickingRef.current.pause();
     };
-  }, [isRunning, tickingVolume, alarmVolume, alarmRepeats]);
+  }, [isRunning, tickingVolume, alarmVolume, alarmRepeats, activeMode.mode, autoStartBreak, autoStartFocus]);
   
   let playAlarm; // Declare outside so it can be referenced globally
 
@@ -140,7 +165,7 @@ export default function Timer({ modeData, onModeChange }) {
     }
   };
 
-  
+  // Update parent component when active mode changes
   useEffect(() => {
     const index = modeData.findIndex(m => m.mode === activeMode.mode);
     if (index !== -1) {
@@ -148,7 +173,34 @@ export default function Timer({ modeData, onModeChange }) {
     }
   }, [activeMode, modeData, onModeChange]);
 
-  // Function to handle starting the next timer
+  // Function to handle automatic timer switching when auto-start is enabled
+  const handleAutoStartNextTimer = () => {
+    stopAlarmPlayback();
+    // Determine which mode to switch to
+    let nextModeIndex;
+    if (activeMode.mode === "Focus") {
+      // After Focus, go to Short Break
+      nextModeIndex = modeData.findIndex(m => m.mode === "Short Break");
+    } else {
+      // After any break, go to Focus
+      nextModeIndex = modeData.findIndex(m => m.mode === "Focus");
+    }
+    
+    if (nextModeIndex !== -1) {
+      // Set the new active mode and reset the timer
+      const nextMode = modeData[nextModeIndex];
+      setActiveMode(nextMode);
+      setTimeLeft(nextMode.minutes * 60);
+      
+      // Important: Add a small delay before starting the timer
+      // This ensures state updates have completed
+      setTimeout(() => {
+        setIsRunning(true);
+      }, 100);
+    }
+  };
+
+  // Function to handle starting the next timer manually
   const handleStartNext = () => {
     stopAlarmPlayback();
     // Determine which mode to switch to
@@ -197,8 +249,6 @@ export default function Timer({ modeData, onModeChange }) {
     setIsRunning(false);
   };
 
-  
-
   return (
     <main className="timer-section">
       <h2 className="timer-title">{activeMode.mode} Timer</h2>
@@ -244,7 +294,7 @@ export default function Timer({ modeData, onModeChange }) {
         </div>
       </div>
       
-      {/* Add the timer completed popup */}
+      {/* Timer completed popup - only shown if auto-start is not enabled for the current mode transition */}
       <TimerCompletedPopup 
         visible={showTimerCompletedPopup} 
         onClose={() => {

@@ -9,6 +9,15 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
   const [shortBreak, setShortBreak] = useState(modeData[shortBreakIndex].minutes);
   const [longBreak, setLongBreak] = useState(modeData[longBreakIndex].minutes);
   
+  // Auto start settings
+  const [autoStartBreak, setAutoStartBreak] = useState(() => {
+    return localStorage.getItem("autoStartBreak") === "true";
+  });
+  
+  const [autoStartFocus, setAutoStartFocus] = useState(() => {
+    return localStorage.getItem("autoStartFocus") === "true";
+  });
+  
   // Sound settings
   const [alarmVolume, setAlarmVolume] = useState(() => {
     return localStorage.getItem("alarmVolume") || 50;
@@ -40,17 +49,19 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
     if (longBreakIndex !== -1) setLongBreak(modeData[longBreakIndex].minutes);
   }, [modeData, focusIndex, shortBreakIndex, longBreakIndex]);
 
-  // Save sound settings to localStorage
+  // Save all settings to localStorage
   useEffect(() => {
     localStorage.setItem("alarmVolume", alarmVolume);
     localStorage.setItem("tickingVolume", tickingVolume);
     localStorage.setItem("alarmSound", alarmSound);
     localStorage.setItem("tickingSound", tickingSound);
     localStorage.setItem("alarmRepeats", alarmRepeats);
+    localStorage.setItem("autoStartBreak", autoStartBreak);
+    localStorage.setItem("autoStartFocus", autoStartFocus);
     
     // Trigger storage event for Timer component to detect
     window.dispatchEvent(new Event('storage'));
-  }, [alarmVolume, tickingVolume, alarmSound, tickingSound, alarmRepeats]);
+  }, [alarmVolume, tickingVolume, alarmSound, tickingSound, alarmRepeats, autoStartBreak, autoStartFocus]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -87,7 +98,11 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
           <div className="option-section toggle-section">
             <div className="toggle-label">Auto Start Break</div>
             <label className="toggle">
-              <input type="checkbox" />
+              <input 
+                type="checkbox" 
+                checked={autoStartBreak}
+                onChange={() => setAutoStartBreak(prev => !prev)}
+              />
               <span className="toggle-slider"></span>
             </label>
           </div>
@@ -95,7 +110,11 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
           <div className="option-section toggle-section">
             <div className="toggle-label">Auto Start Focus</div>
             <label className="toggle">
-              <input type="checkbox" />
+              <input 
+                type="checkbox" 
+                checked={autoStartFocus}
+                onChange={() => setAutoStartFocus(prev => !prev)}
+              />
               <span className="toggle-slider"></span>
             </label>
           </div>
