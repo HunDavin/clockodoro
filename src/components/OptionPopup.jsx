@@ -119,8 +119,6 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
                       value={alarmSound}
                       onChange={(e) => setAlarmSound(e.target.value)}
                     >
-                      <option value="Ding">Ding</option>
-                      <option value="Bell">Bell</option>
                       <option value="Alarm">Alarm</option>
                     </select>
                   </div>
@@ -166,9 +164,7 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
                       value={tickingSound}
                       onChange={(e) => setTickingSound(e.target.value)}
                     >
-                      <option value="Rain">Rain</option>
                       <option value="Tick">Tick</option>
-                      <option value="White Noise">White Noise</option>
                     </select>
                   </div>
                 </div>

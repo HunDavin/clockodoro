@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from "react";
+import TaskCompletedPopup from "./TaskCompletedPopup";
 
 export default function Task() {
   const [tasks, setTasks] = useState(["HomeWork", "Other"]);
   const [selectedTask, setSelectedTask] = useState("Choose Task");
   const [newTaskInput, setNewTaskInput] = useState("");
   const [showTaskList, setShowTaskList] = useState(false);
+  const [showCompletedPopup, setShowCompletedPopup] = useState(false);
+  const [completedTaskName, setCompletedTaskName] = useState("");
   const taskRef = useRef(null);
 
   const handleAddTask = () => {
@@ -22,8 +25,16 @@ export default function Task() {
     e.stopPropagation();
     
     if (selectedTask !== "Choose Task") {
+      // Save the task name before resetting
+      setCompletedTaskName(selectedTask);
+      
+      // Show the completed popup
+      setShowCompletedPopup(true);
+      
+      // Remove the task from the list
       setTasks(prev => prev.filter(task => task !== selectedTask));
       
+      // Reset selected task
       setSelectedTask("Choose Task");
     }
   };
@@ -66,6 +77,11 @@ export default function Task() {
           </li>
         </ul>
       )}
+      <TaskCompletedPopup 
+        visible={showCompletedPopup} 
+        onClose={() => setShowCompletedPopup(false)} 
+        taskName={completedTaskName} 
+      />
     </div>
   );
 }
