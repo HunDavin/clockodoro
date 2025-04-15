@@ -8,15 +8,30 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
   const [focus, setFocus] = useState(modeData[focusIndex].minutes);
   const [shortBreak, setShortBreak] = useState(modeData[shortBreakIndex].minutes);
   const [longBreak, setLongBreak] = useState(modeData[longBreakIndex].minutes);
-  const [volume1, setVolume1] = useState(50);
-  const [volume2, setVolume2] = useState(50);
+  
+  // Sound settings
+  const [alarmVolume, setAlarmVolume] = useState(() => {
+    return localStorage.getItem("alarmVolume") || 50;
+  });
+  const [tickingVolume, setTickingVolume] = useState(() => {
+    return localStorage.getItem("tickingVolume") || 50;
+  });
+  const [alarmSound, setAlarmSound] = useState(() => {
+    return localStorage.getItem("alarmSound") || "Ding";
+  });
+  const [tickingSound, setTickingSound] = useState(() => {
+    return localStorage.getItem("tickingSound") || "Rain";
+  });
+  const [alarmRepeats, setAlarmRepeats] = useState(() => {
+    return localStorage.getItem("alarmRepeats") || 4;
+  });
   
   const slider1Style = {
-    background: `linear-gradient(to right, #FF5C5C 0%, #FF5C5C ${volume1}%, #ddd ${volume1}%, #ddd 100%)`
+    background: `linear-gradient(to right, #FF5C5C 0%, #FF5C5C ${alarmVolume}%, #ddd ${alarmVolume}%, #ddd 100%)`
   };
   
   const slider2Style = {
-    background: `linear-gradient(to right, #FF5C5C 0%, #FF5C5C ${volume2}%, #ddd ${volume2}%, #ddd 100%)`
+    background: `linear-gradient(to right, #FF5C5C 0%, #FF5C5C ${tickingVolume}%, #ddd ${tickingVolume}%, #ddd 100%)`
   };
   
   useEffect(() => {
@@ -24,6 +39,18 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
     if (shortBreakIndex !== -1) setShortBreak(modeData[shortBreakIndex].minutes);
     if (longBreakIndex !== -1) setLongBreak(modeData[longBreakIndex].minutes);
   }, [modeData, focusIndex, shortBreakIndex, longBreakIndex]);
+
+  // Save sound settings to localStorage
+  useEffect(() => {
+    localStorage.setItem("alarmVolume", alarmVolume);
+    localStorage.setItem("tickingVolume", tickingVolume);
+    localStorage.setItem("alarmSound", alarmSound);
+    localStorage.setItem("tickingSound", tickingSound);
+    localStorage.setItem("alarmRepeats", alarmRepeats);
+    
+    // Trigger storage event for Timer component to detect
+    window.dispatchEvent(new Event('storage'));
+  }, [alarmVolume, tickingVolume, alarmSound, tickingSound, alarmRepeats]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -87,21 +114,41 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
                 <div className="sound-column">
                   <label>Sound</label>
                   <div className="select-wrapper">
-                    <select className="sound-select">
-                      <option>Ding</option>
+                    <select 
+                      className="sound-select" 
+                      value={alarmSound}
+                      onChange={(e) => setAlarmSound(e.target.value)}
+                    >
+                      <option value="Ding">Ding</option>
+                      <option value="Bell">Bell</option>
+                      <option value="Alarm">Alarm</option>
                     </select>
                   </div>
                 </div>
                 <div className="sound-column">
                   <label>Repeat</label>
-                  <input type="number" defaultValue="4" className="repeat-field" min="1" />
+                  <input 
+                    type="number" 
+                    value={alarmRepeats} 
+                    onChange={(e) => setAlarmRepeats(Number(e.target.value))}
+                    className="repeat-field" 
+                    min="1" 
+                  />
                 </div>
               </div>
               <div className="volume-row">
                 <label>Volume</label>
                 <div className="volume-control">
-                  <input type="range" min="0" max="100" style={slider1Style} value={volume1} onChange={(e) => setVolume1(e.target.value)} className="volume-slider" />
-                  <span className="volume-value">{volume1}</span>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    style={slider1Style} 
+                    value={alarmVolume} 
+                    onChange={(e) => setAlarmVolume(e.target.value)} 
+                    className="volume-slider" 
+                  />
+                  <span className="volume-value">{alarmVolume}</span>
                 </div>
               </div>
             </div>
@@ -114,8 +161,14 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
                 <div className="sound-column full-width">
                   <label>Sound</label>
                   <div className="select-wrapper">
-                    <select className="sound-select">
-                      <option>Rain</option>
+                    <select 
+                      className="sound-select" 
+                      value={tickingSound}
+                      onChange={(e) => setTickingSound(e.target.value)}
+                    >
+                      <option value="Rain">Rain</option>
+                      <option value="Tick">Tick</option>
+                      <option value="White Noise">White Noise</option>
                     </select>
                   </div>
                 </div>
@@ -123,8 +176,16 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
               <div className="volume-row">
                 <label>Volume</label>
                 <div className="volume-control">
-                  <input type="range" min="0" max="100" style={slider2Style} value={volume2} onChange={(e) => setVolume2(e.target.value)} className="volume-slider" />
-                  <span className="volume-value">{volume2}</span>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    style={slider2Style} 
+                    value={tickingVolume} 
+                    onChange={(e) => setTickingVolume(e.target.value)} 
+                    className="volume-slider" 
+                  />
+                  <span className="volume-value">{tickingVolume}</span>
                 </div>
               </div>
             </div>

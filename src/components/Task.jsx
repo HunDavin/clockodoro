@@ -17,6 +17,16 @@ export default function Task() {
     e.stopPropagation();
     setTasks(prev => prev.filter(task => task !== taskToRemove));
   };
+  
+  const handleRemoveSelectedTask = (e) => {
+    e.stopPropagation();
+    
+    if (selectedTask !== "Choose Task") {
+      setTasks(prev => prev.filter(task => task !== selectedTask));
+      
+      setSelectedTask("Choose Task");
+    }
+  };
 
   const handleTaskSelect = (task) => {
     setSelectedTask(task);
@@ -37,7 +47,7 @@ export default function Task() {
   return (
     <div className="task-container" ref={taskRef}>
       <button className="task-button" onClick={() => setShowTaskList(prev => !prev)}>
-        <span className="check-icon">✓</span>
+        <span className="check-icon" onClick={handleRemoveSelectedTask}>✓</span>
         <span className="task-text">{selectedTask}</span>
         <span className="dropdown-arrow">▼</span>
       </button>
@@ -49,7 +59,7 @@ export default function Task() {
               <span className="task-cancel" onClick={(e) => handleRemoveTask(task, e)}>&minus;</span>
             </li>
           ))}
-          <li className="task-divider"></li>
+          {tasks.length > 0 && <li className="task-divider"></li>}
           <li className="task-item add-task">
             <input className="task-input" type="text" placeholder="Add Task" value={newTaskInput} onChange={(e) => setNewTaskInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleAddTask()} />
             <button className="task-input-btn" onClick={handleAddTask}>&#43;</button>
