@@ -306,10 +306,14 @@ export default function Timer({ modeData, onModeChange }) {
   const handleSaveSession = () => {
     // Save the partial session
     saveCompletedSession(activeMode.mode, elapsedTime);
+    // Reset elapsed time to zero after saving
+    setElapsedTime(0);
     setShowSaveSessionPopup(false);
   };
 
   const handleDiscardSession = () => {
+    // Reset elapsed time to zero even when discarding
+    setElapsedTime(0);
     // Just close the popup without saving
     setShowSaveSessionPopup(false);
   };
@@ -318,19 +322,19 @@ export default function Timer({ modeData, onModeChange }) {
   const handleModeSelect = (mode) => {
     // If we're changing modes while a Focus timer is running,
     // ask if the user wants to save their progress
-    if (isRunning && activeMode.mode === "Focus" && mode.mode !== "Focus" && elapsedTime > 10) {
+    if (isRunning && activeMode.mode === "Focus" && mode.mode !== "Focus" && elapsedTime > 0) {
       setIsRunning(false);
       setShowSaveSessionPopup(true);
       // Store the mode to switch to after deciding whether to save
       sessionStorage.setItem('pendingMode', JSON.stringify(mode));
-    } else {
-      // Direct mode change
-      setActiveMode(mode);
-      setTimeLeft(mode.minutes * 60);
-      setOriginalDuration(mode.minutes * 60);
-      setElapsedTime(0);
-      setIsRunning(false);
-    }
+    } 
+
+    // Direct mode change
+    setActiveMode(mode);
+    setTimeLeft(mode.minutes * 60);
+    setOriginalDuration(mode.minutes * 60);
+    setElapsedTime(0);
+    setIsRunning(false);
   };
 
   return (
