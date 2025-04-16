@@ -212,7 +212,7 @@ export default function Timer({ modeData, onModeChange }) {
   // Function to determine which break type to use based on the completed sessions
   const getNextBreakType = () => {
     // If we've completed the required number of focus sessions, it's time for a long break
-    if (completedFocusSessions % longBreakInterval === 0 && completedFocusSessions > 0) {
+    if (completedFocusSessions > 0 && completedFocusSessions % longBreakInterval === 0) {
       return "Long Break";
     } else {
       return "Short Break";
@@ -251,20 +251,16 @@ export default function Timer({ modeData, onModeChange }) {
     if (activeMode.mode === "Focus") {
       // After Focus, determine if we should go to Short Break or Long Break
       const nextBreakType = getNextBreakType();
-      nextModeIndex = modeData.findIndex(m => m.mode === nextBreakType);
       
-      // If this was a long break, reset the counter
+      // *** IMPORTANT FIX: Reset counter right before long break starts ***
       if (nextBreakType === "Long Break") {
-        // We'll reset the counter after the long break is completed
+        setCompletedFocusSessions(0);
       }
+      
+      nextModeIndex = modeData.findIndex(m => m.mode === nextBreakType);
     } else {
       // After any break, go to Focus
       nextModeIndex = modeData.findIndex(m => m.mode === "Focus");
-      
-      // If we just finished a long break, reset the counter
-      if (activeMode.mode === "Long Break") {
-        setCompletedFocusSessions(0);
-      }
     }
     
     if (nextModeIndex !== -1) {
@@ -293,20 +289,16 @@ export default function Timer({ modeData, onModeChange }) {
     if (activeMode.mode === "Focus") {
       // After Focus, determine if we should go to Short Break or Long Break
       const nextBreakType = getNextBreakType();
-      nextModeIndex = modeData.findIndex(m => m.mode === nextBreakType);
       
-      // If this was a long break, reset the counter
+      // *** IMPORTANT FIX: Reset counter right before long break starts ***
       if (nextBreakType === "Long Break") {
-        // We'll reset the counter after the long break is completed
+        setCompletedFocusSessions(0);
       }
+      
+      nextModeIndex = modeData.findIndex(m => m.mode === nextBreakType);
     } else {
       // After any break, go to Focus
       nextModeIndex = modeData.findIndex(m => m.mode === "Focus");
-      
-      // If we just finished a long break, reset the counter
-      if (activeMode.mode === "Long Break") {
-        setCompletedFocusSessions(0);
-      }
     }
     
     if (nextModeIndex !== -1) {
@@ -376,6 +368,13 @@ export default function Timer({ modeData, onModeChange }) {
       sessionStorage.setItem('pendingMode', JSON.stringify(mode));
     } else {
       // Direct mode change
+      
+      // *** IMPORTANT ADDITIONAL FIX ***
+      // If manually switching to Long Break, also reset the counter
+      if (mode.mode === "Long Break") {
+        setCompletedFocusSessions(0);
+      }
+      
       setActiveMode(mode);
       setTimeLeft(mode.minutes * 60);
       setOriginalDuration(mode.minutes * 60);
