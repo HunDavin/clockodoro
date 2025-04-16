@@ -9,6 +9,13 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
   const [shortBreak, setShortBreak] = useState(modeData[shortBreakIndex].minutes);
   const [longBreak, setLongBreak] = useState(modeData[longBreakIndex].minutes);
   
+  // Long break interval state
+  const [longBreakInterval, setLongBreakInterval] = useState(() => {
+    return localStorage.getItem("longBreakInterval") ? 
+      parseInt(localStorage.getItem("longBreakInterval")) : 
+      4;
+  });
+  
   // Auto start settings
   const [autoStartBreak, setAutoStartBreak] = useState(() => {
     return localStorage.getItem("autoStartBreak") === "true";
@@ -56,12 +63,13 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
     localStorage.setItem("alarmSound", alarmSound);
     localStorage.setItem("tickingSound", tickingSound);
     localStorage.setItem("alarmRepeats", alarmRepeats);
+    localStorage.setItem("longBreakInterval", longBreakInterval);
     localStorage.setItem("autoStartBreak", autoStartBreak);
     localStorage.setItem("autoStartFocus", autoStartFocus);
     
     // Trigger storage event for Timer component to detect
     window.dispatchEvent(new Event('storage'));
-  }, [alarmVolume, tickingVolume, alarmSound, tickingSound, alarmRepeats, autoStartBreak, autoStartFocus]);
+  }, [alarmVolume, tickingVolume, alarmSound, tickingSound, alarmRepeats, longBreakInterval, autoStartBreak, autoStartFocus]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -122,7 +130,13 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
           <div className="option-section">
             <div className="interval-section">
               <div className="interval-label">Long Break Interval</div>
-              <input type="number" defaultValue="4" className="interval-field" min="1" />
+              <input 
+                type="number" 
+                value={longBreakInterval}
+                onChange={(e) => setLongBreakInterval(Number(e.target.value))}
+                className="interval-field" 
+                min="1" 
+              />
             </div>
           </div>
           <div className="divider"></div>

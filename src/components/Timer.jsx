@@ -23,6 +23,9 @@ export default function Timer({ modeData, onModeChange }) {
   const [showTimerCompletedPopup, setShowTimerCompletedPopup] = useState(false);
   const [showSaveSessionPopup, setShowSaveSessionPopup] = useState(false);
   
+  // Track the number of completed focus sessions
+  const [completedFocusSessions, setCompletedFocusSessions] = useState(0);
+  
   // Audio settings from localStorage or defaults
   const [tickingVolume, setTickingVolume] = useState(() => {
     return localStorage.getItem("tickingVolume") ? 
@@ -47,6 +50,13 @@ export default function Timer({ modeData, onModeChange }) {
   
   const [autoStartFocus, setAutoStartFocus] = useState(() => {
     return localStorage.getItem("autoStartFocus") === "true";
+  });
+  
+  // Get the long break interval from localStorage or use default (4)
+  const [longBreakInterval, setLongBreakInterval] = useState(() => {
+    return localStorage.getItem("longBreakInterval") ? 
+      parseInt(localStorage.getItem("longBreakInterval")) : 
+      4;
   });
   
   const minutes = Math.floor(timeLeft / 60);
@@ -77,12 +87,15 @@ export default function Timer({ modeData, onModeChange }) {
         parseInt(localStorage.getItem("alarmVolume")) / 100 : 0.5;
       const newAlarmRepeats = localStorage.getItem("alarmRepeats") ?
         parseInt(localStorage.getItem("alarmRepeats")) : 4;
+      const newLongBreakInterval = localStorage.getItem("longBreakInterval") ?
+        parseInt(localStorage.getItem("longBreakInterval")) : 4;
       const newAutoStartBreak = localStorage.getItem("autoStartBreak") === "true";
       const newAutoStartFocus = localStorage.getItem("autoStartFocus") === "true";
       
       setTickingVolume(newTickingVolume);
       setAlarmVolume(newAlarmVolume);
       setAlarmRepeats(newAlarmRepeats);
+      setLongBreakInterval(newLongBreakInterval);
       setAutoStartBreak(newAutoStartBreak);
       setAutoStartFocus(newAutoStartFocus);
     };
@@ -126,8 +139,9 @@ export default function Timer({ modeData, onModeChange }) {
             playAlarmWithRepeats(alarmRepeats);
           }
           
-          // Save completed session
+          // If focus timer ended, increment the completed sessions count
           if (activeMode.mode === "Focus") {
+            setCompletedFocusSessions(prev => prev + 1);
             saveCompletedSession(activeMode.mode, totalElapsed);
           }
           
@@ -147,7 +161,7 @@ export default function Timer({ modeData, onModeChange }) {
         }
         
         // Update elapsed time as the timer runs
-        setElapsedTime(originalDuration - prev + 1);
+        setElapsedTime(e => e + 1);
         
         return prev - 1;
       });
@@ -195,6 +209,16 @@ export default function Timer({ modeData, onModeChange }) {
     }
   }, [activeMode, modeData, onModeChange]);
 
+  // Function to determine which break type to use based on the completed sessions
+  const getNextBreakType = () => {
+    // If we've completed the required number of focus sessions, it's time for a long break
+    if (completedFocusSessions % longBreakInterval === 0 && completedFocusSessions > 0) {
+      return "Long Break";
+    } else {
+      return "Short Break";
+    }
+  };
+
   // Function to save completed or partial session
   const saveCompletedSession = (mode, durationInSeconds) => {
     if (mode === "Focus") {
@@ -220,14 +244,27 @@ export default function Timer({ modeData, onModeChange }) {
   // Function to handle automatic timer switching when auto-start is enabled
   const handleAutoStartNextTimer = () => {
     stopAlarmPlayback();
+    
     // Determine which mode to switch to
     let nextModeIndex;
+    
     if (activeMode.mode === "Focus") {
-      // After Focus, go to Short Break
-      nextModeIndex = modeData.findIndex(m => m.mode === "Short Break");
+      // After Focus, determine if we should go to Short Break or Long Break
+      const nextBreakType = getNextBreakType();
+      nextModeIndex = modeData.findIndex(m => m.mode === nextBreakType);
+      
+      // If this was a long break, reset the counter
+      if (nextBreakType === "Long Break") {
+        // We'll reset the counter after the long break is completed
+      }
     } else {
       // After any break, go to Focus
       nextModeIndex = modeData.findIndex(m => m.mode === "Focus");
+      
+      // If we just finished a long break, reset the counter
+      if (activeMode.mode === "Long Break") {
+        setCompletedFocusSessions(0);
+      }
     }
     
     if (nextModeIndex !== -1) {
@@ -249,14 +286,27 @@ export default function Timer({ modeData, onModeChange }) {
   // Function to handle starting the next timer manually
   const handleStartNext = () => {
     stopAlarmPlayback();
+    
     // Determine which mode to switch to
     let nextModeIndex;
+    
     if (activeMode.mode === "Focus") {
-      // After Focus, go to Short Break
-      nextModeIndex = modeData.findIndex(m => m.mode === "Short Break");
+      // After Focus, determine if we should go to Short Break or Long Break
+      const nextBreakType = getNextBreakType();
+      nextModeIndex = modeData.findIndex(m => m.mode === nextBreakType);
+      
+      // If this was a long break, reset the counter
+      if (nextBreakType === "Long Break") {
+        // We'll reset the counter after the long break is completed
+      }
     } else {
       // After any break, go to Focus
       nextModeIndex = modeData.findIndex(m => m.mode === "Focus");
+      
+      // If we just finished a long break, reset the counter
+      if (activeMode.mode === "Long Break") {
+        setCompletedFocusSessions(0);
+      }
     }
     
     if (nextModeIndex !== -1) {
@@ -298,6 +348,7 @@ export default function Timer({ modeData, onModeChange }) {
       }
     } else {
       // Starting the timer
+      setElapsedTime(0);
       setIsRunning(true);
     }
   };
@@ -306,14 +357,10 @@ export default function Timer({ modeData, onModeChange }) {
   const handleSaveSession = () => {
     // Save the partial session
     saveCompletedSession(activeMode.mode, elapsedTime);
-    // Reset elapsed time to zero after saving
-    setElapsedTime(0);
     setShowSaveSessionPopup(false);
   };
 
   const handleDiscardSession = () => {
-    // Reset elapsed time to zero even when discarding
-    setElapsedTime(0);
     // Just close the popup without saving
     setShowSaveSessionPopup(false);
   };
@@ -327,14 +374,14 @@ export default function Timer({ modeData, onModeChange }) {
       setShowSaveSessionPopup(true);
       // Store the mode to switch to after deciding whether to save
       sessionStorage.setItem('pendingMode', JSON.stringify(mode));
-    } 
-
-    // Direct mode change
-    setActiveMode(mode);
-    setTimeLeft(mode.minutes * 60);
-    setOriginalDuration(mode.minutes * 60);
-    setElapsedTime(0);
-    setIsRunning(false);
+    } else {
+      // Direct mode change
+      setActiveMode(mode);
+      setTimeLeft(mode.minutes * 60);
+      setOriginalDuration(mode.minutes * 60);
+      setElapsedTime(0);
+      setIsRunning(false);
+    }
   };
 
   return (
@@ -350,6 +397,10 @@ export default function Timer({ modeData, onModeChange }) {
         <img src={clockIcon} alt="clockIcon" className="clock-icon" />
         <img src={clockIcon} alt="clockIcon" className="clock-icon" />
         <img src={clockIcon} alt="clockIcon" className="clock-icon" />
+      </div>
+      {/* Display the number of completed focus sessions */}
+      <div className="focus-sessions-info">
+        <span>Session {completedFocusSessions} of {longBreakInterval}</span>
       </div>
       <div className="controls-container">
         {modeData.map((mode) => {
@@ -392,6 +443,7 @@ export default function Timer({ modeData, onModeChange }) {
         mode={activeMode.mode}
         onStartNext={handleStartNext}
         onStop={handleStop}
+        nextBreakType={activeMode.mode === "Focus" ? getNextBreakType() : null}
       />
       
       {/* Save session popup when pausing */}

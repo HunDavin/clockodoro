@@ -1,9 +1,9 @@
-export default function TimerCompletedPopup({ visible, onClose, mode, onStartNext, onStop }) {
+export default function TimerCompletedPopup({ visible, onClose, mode, onStartNext, onStop, nextBreakType }) {
   if (!visible) return null;
 
   // Determine the next mode and button text based on current mode
   const isBreakTimer = mode === "Short Break" || mode === "Long Break";
-  const nextModeName = isBreakTimer ? "Focus" : "Break";
+  const nextModeName = isBreakTimer ? "Focus" : nextBreakType || "Break";
   const messageText = isBreakTimer ? "Break time is up!" : "Focus time is up!";
 
   return (
