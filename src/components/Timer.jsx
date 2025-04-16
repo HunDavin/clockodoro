@@ -25,6 +25,8 @@ export default function Timer({ modeData, onModeChange }) {
   
   // Track the number of completed focus sessions
   const [completedFocusSessions, setCompletedFocusSessions] = useState(0);
+  // Track if a focus session was just completed but not yet confirmed
+  const [pendingFocusCompletion, setPendingFocusCompletion] = useState(false);
   
   // Audio settings from localStorage or defaults
   const [tickingVolume, setTickingVolume] = useState(() => {
@@ -139,16 +141,19 @@ export default function Timer({ modeData, onModeChange }) {
             playAlarmWithRepeats(alarmRepeats);
           }
           
-          // If focus timer ended, increment the completed sessions count
+          // If focus timer ended
           if (activeMode.mode === "Focus") {
-            setCompletedFocusSessions(prev => prev + 1);
-            saveCompletedSession(activeMode.mode, totalElapsed);
-          }
-          
-          // Determine what to do when timer ends
-          if (activeMode.mode === "Focus" && autoStartBreak) {
-            // Auto start break - don't show popup, start break immediately
-            handleAutoStartNextTimer();
+            // For auto-start mode, increment the counter immediately
+            if (autoStartBreak) {
+              setCompletedFocusSessions(prev => prev + 1);
+              saveCompletedSession(activeMode.mode, totalElapsed);
+              handleAutoStartNextTimer();
+            } else {
+              // For manual mode, mark as pending but don't increment yet
+              setPendingFocusCompletion(true);
+              saveCompletedSession(activeMode.mode, totalElapsed);
+              setShowTimerCompletedPopup(true);
+            }
           } else if ((activeMode.mode === "Short Break" || activeMode.mode === "Long Break") && autoStartFocus) {
             // Auto start focus - don't show popup, start focus immediately
             handleAutoStartNextTimer();
@@ -212,7 +217,7 @@ export default function Timer({ modeData, onModeChange }) {
   // Function to determine which break type to use based on the completed sessions
   const getNextBreakType = () => {
     // If we've completed the required number of focus sessions, it's time for a long break
-    if (completedFocusSessions > 0 && completedFocusSessions % longBreakInterval === 0) {
+    if (completedFocusSessions % longBreakInterval === 0) {
       return "Long Break";
     } else {
       return "Short Break";
@@ -252,7 +257,7 @@ export default function Timer({ modeData, onModeChange }) {
       // After Focus, determine if we should go to Short Break or Long Break
       const nextBreakType = getNextBreakType();
       
-      // *** IMPORTANT FIX: Reset counter right before long break starts ***
+      // Reset counter right before long break starts
       if (nextBreakType === "Long Break") {
         setCompletedFocusSessions(0);
       }
@@ -270,6 +275,7 @@ export default function Timer({ modeData, onModeChange }) {
       setTimeLeft(nextMode.minutes * 60);
       setOriginalDuration(nextMode.minutes * 60);
       setElapsedTime(0);
+      setPendingFocusCompletion(false); // Clear any pending completion state
       
       // Important: Add a small delay before starting the timer
       // This ensures state updates have completed
@@ -282,6 +288,12 @@ export default function Timer({ modeData, onModeChange }) {
   // Function to handle starting the next timer manually
   const handleStartNext = () => {
     stopAlarmPlayback();
+    
+    // If there was a pending focus completion, now is the time to update the counter
+    if (pendingFocusCompletion) {
+      setCompletedFocusSessions(prev => prev + 1);
+      setPendingFocusCompletion(false);
+    }
     
     // Determine which mode to switch to
     let nextModeIndex;
@@ -323,6 +335,7 @@ export default function Timer({ modeData, onModeChange }) {
   // Function to handle stopping the timer
   const handleStop = () => {
     stopAlarmPlayback();
+    setPendingFocusCompletion(false); // Clear pending state if user stops
     setShowTimerCompletedPopup(false);
     // Timer is already stopped, just close the popup
   };
@@ -369,7 +382,6 @@ export default function Timer({ modeData, onModeChange }) {
     } else {
       // Direct mode change
       
-      // *** IMPORTANT ADDITIONAL FIX ***
       // If manually switching to Long Break, also reset the counter
       if (mode.mode === "Long Break") {
         setCompletedFocusSessions(0);
@@ -380,6 +392,7 @@ export default function Timer({ modeData, onModeChange }) {
       setOriginalDuration(mode.minutes * 60);
       setElapsedTime(0);
       setIsRunning(false);
+      setPendingFocusCompletion(false); // Clear any pending completion state
     }
   };
 
@@ -441,6 +454,7 @@ export default function Timer({ modeData, onModeChange }) {
         onClose={() => {
           stopAlarmPlayback();
           setShowTimerCompletedPopup(false);
+          setPendingFocusCompletion(false); // Clear pending state if user closes popup
         }}
         mode={activeMode.mode}
         onStartNext={handleStartNext}
