@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "../css/report.css";
-import { getFocusTimeStats } from "../js/focusTimeCalculator";
+import { getFocusTimeStats, resetFocusTimeData } from "../js/focusTimeCalculator";
 
 export default function Report({ visible, onClose }) {
   const [view, setView] = useState("Daily"); // "Daily", "Weekly", "Monthly"
@@ -9,14 +9,20 @@ export default function Report({ visible, onClose }) {
     weekly: { hours: 0, minutes: 0, seconds: 0 },
     monthly: { hours: 0, minutes: 0, seconds: 0 }
   });
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   
   // Load real usage data when the component mounts or becomes visible
   useEffect(() => {
     if (visible) {
-      const stats = getFocusTimeStats();
-      setFocusTime(stats);
+      loadStats();
     }
   }, [visible]);
+  
+  // Function to load stats
+  const loadStats = () => {
+    const stats = getFocusTimeStats();
+    setFocusTime(stats);
+  };
   
   // Calculate which data to show based on current view
   const currentData = view === "Daily" 
@@ -24,6 +30,32 @@ export default function Report({ visible, onClose }) {
     : view === "Weekly" 
       ? focusTime.weekly 
       : focusTime.monthly;
+
+  // Function to handle reset
+  const handleReset = () => {
+    setShowResetConfirm(true);
+  };
+  
+  // Function to confirm reset
+  const confirmReset = () => {
+    let timeframe = view.toLowerCase();
+    
+    // Reset data based on the current view
+    const success = resetFocusTimeData(timeframe);
+    
+    if (success) {
+      // Reload the stats
+      loadStats();
+      setShowResetConfirm(false);
+    } else {
+      alert("Failed to reset data. Please try again.");
+    }
+  };
+  
+  // Function to cancel reset
+  const cancelReset = () => {
+    setShowResetConfirm(false);
+  };
 
   if (!visible) return null;
 
@@ -81,7 +113,25 @@ export default function Report({ visible, onClose }) {
               </div>
             </div>
           </div>
+          <div className="report-actions">
+            <button className="reset-button" onClick={handleReset}>
+              Reset Data
+            </button>
+          </div>
         </div>
+        
+        {showResetConfirm && (
+          <div className="reset-confirm-popup">
+            <div className="reset-confirm-content">
+              <h3>Reset Data?</h3>
+              <p>Are you sure you want to reset all focus time data? This cannot be undone.</p>
+              <div className="reset-confirm-actions">
+                <button className="cancel-button" onClick={cancelReset}>Cancel</button>
+                <button className="confirm-button" onClick={confirmReset}>Reset</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

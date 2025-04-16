@@ -1,4 +1,4 @@
-// src/utils/focusTimeCalculator.js
+// src/js/focusTimeCalculator.js
 
 /**
  * Get all saved focus sessions from localStorage
@@ -108,4 +108,68 @@ export function getFocusTimeStats() {
     weekly: calculateTotalTime(weeklySessions),
     monthly: calculateTotalTime(monthlySessions)
   };
+}
+
+/**
+ * Reset focus time data
+ * @param {string} timeframe - "daily", "weekly", "monthly", or "all"
+ * @returns {boolean} Success status
+ */
+export function resetFocusTimeData(timeframe) {
+  try {
+    const allSessions = getAllFocusSessions();
+    let sessionsToKeep = [];
+    
+    if (timeframe === "all") {
+      // Reset all data
+      localStorage.setItem('focusSessions', JSON.stringify([]));
+      return true;
+    }
+    
+    // Filter out sessions based on timeframe
+    if (timeframe === "daily") {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // Keep sessions that are not from today
+      sessionsToKeep = allSessions.filter(session => {
+        const sessionDate = new Date(session.endTime);
+        return sessionDate < today;
+      });
+    } 
+    else if (timeframe === "weekly") {
+      const today = new Date();
+      const firstDayOfWeek = new Date(today);
+      const day = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+      
+      // Set to previous Sunday (or today if it's Sunday)
+      const diff = day === 0 ? 0 : day;
+      firstDayOfWeek.setDate(today.getDate() - diff);
+      firstDayOfWeek.setHours(0, 0, 0, 0);
+      
+      // Keep sessions that are not from this week
+      sessionsToKeep = allSessions.filter(session => {
+        const sessionDate = new Date(session.endTime);
+        return sessionDate < firstDayOfWeek;
+      });
+    } 
+    else if (timeframe === "monthly") {
+      const today = new Date();
+      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      firstDayOfMonth.setHours(0, 0, 0, 0);
+      
+      // Keep sessions that are not from this month
+      sessionsToKeep = allSessions.filter(session => {
+        const sessionDate = new Date(session.endTime);
+        return sessionDate < firstDayOfMonth;
+      });
+    }
+    
+    // Save the filtered sessions back to localStorage
+    localStorage.setItem('focusSessions', JSON.stringify(sessionsToKeep));
+    return true;
+  } catch (error) {
+    console.error("Error resetting focus time data:", error);
+    return false;
+  }
 }
