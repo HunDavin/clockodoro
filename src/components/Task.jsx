@@ -66,7 +66,7 @@ export default function Task() {
         <ul className="task-list">
           {tasks.map((task, index) => (
             <li key={index} className="task-item" onClick={() => handleTaskSelect(task)}>
-              {task}
+              <span className="task-text">{task}</span>
               <span className="task-cancel" onClick={(e) => handleRemoveTask(task, e)}>&minus;</span>
             </li>
           ))}
