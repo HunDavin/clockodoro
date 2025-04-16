@@ -1,7 +1,7 @@
 import logo from "../assets/Clockodoro.png";
 import Task from "./Task";
 
-export default function Header({ onTimer }) {
+export default function Header({ onTimer, onReport }) {
   return (
     <header className="header">
       <div className="logo-container">
@@ -11,7 +11,7 @@ export default function Header({ onTimer }) {
       <Task />
       <ul className="nav-lists">
         <li className="nav-list" onClick={onTimer}>Timer Option</li>
-        <li className="nav-list">Report</li>
+        <li className="nav-list" onClick={onReport}>Report</li>
       </ul>
       <button className="login-button">Login</button>
     </header>

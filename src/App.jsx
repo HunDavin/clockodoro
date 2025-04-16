@@ -4,10 +4,12 @@ import Header from "./components/Header";
 import Timer from "./components/Timer";
 import Wave from "./components/Wave";
 import OptionPopup from "./components/OptionPopup";
+import Report from "./components/Report";
 
 function App() {
   const [mode, setMode] = useState([...modes]);
   const [showTimeOption, setShowTimeOption] = useState(false);
+  const [showReport, setShowReport] = useState(false);
   const [modeIndex, setModeIndex] = useState(0);
 
   const turnOnTimeOption = () => {
@@ -17,6 +19,16 @@ function App() {
 
   const turnOffTimeOption = () => {
     setShowTimeOption(false); 
+    document.body.classList.remove('popup-active');
+  }
+  
+  const openReport = () => {
+    setShowReport(true);
+    document.body.classList.add('popup-active');
+  }
+  
+  const closeReport = () => {
+    setShowReport(false);
     document.body.classList.remove('popup-active');
   }
 
@@ -33,10 +45,11 @@ function App() {
 
   return (
     <div className="app-container">
-      <Header onTimer={turnOnTimeOption} />
+      <Header onTimer={turnOnTimeOption} onReport={openReport} />
       <Timer modeData={mode} onModeChange={setModeIndex}/>
       <Wave activeMode={mode[modeIndex]} />
       {showTimeOption && <OptionPopup onClose={turnOffTimeOption} onUpdate={handleOptionUpdate} modeData={mode}/>}
+      {showReport && <Report visible={showReport} onClose={closeReport} />}
     </div>
   );
 }
