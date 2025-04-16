@@ -383,6 +383,9 @@ export default function Timer({ modeData, onModeChange }) {
     }
   };
 
+  // Check if current mode is a break mode
+  const isBreakMode = activeMode.mode === "Short Break" || activeMode.mode === "Long Break";
+
   return (
     <main className="timer-section">
       <h2 className="timer-title">{activeMode.mode} Timer</h2>
@@ -397,8 +400,8 @@ export default function Timer({ modeData, onModeChange }) {
         <img src={clockIcon} alt="clockIcon" className="clock-icon" />
         <img src={clockIcon} alt="clockIcon" className="clock-icon" />
       </div>
-      {/* Display the number of completed focus sessions */}
-      <div className="focus-sessions-info">
+      {/* Display the number of completed focus sessions with dynamic color */}
+      <div className="focus-sessions-info" style={{ color: isBreakMode ? "rgba(255, 255, 255, 0.9)" : "" }}>
         <span>Session {completedFocusSessions} of {longBreakInterval}</span>
       </div>
       <div className="controls-container">
