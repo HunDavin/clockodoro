@@ -3,18 +3,25 @@ import clockIcon from "../assets/Clockicon.png";
 // Import your audio files
 import tickSound from "../assets/tick.mp3";
 import alarmSound from "../assets/alarm.mp3";
-// Import the TimerCompletedPopup component
+// Import the components
 import TimerCompletedPopup from "./TimerCompletedPopup";
+import SaveSessionConfirmPopup from "./SaveSessionConfirmPopup";
 
 export default function Timer({ modeData, onModeChange }) {
   const [activeMode, setActiveMode] = useState(modeData[0]);
   const [timeLeft, setTimeLeft] = useState(activeMode.minutes * 60);
   const [isRunning, setIsRunning] = useState(false);
+  // Track the original duration and elapsed time
+  const [originalDuration, setOriginalDuration] = useState(activeMode.minutes * 60);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  
   // References for audio elements
   const tickingRef = useRef(new Audio(tickSound));
   const alarmRef = useRef(new Audio(alarmSound));
-  // Add state for timer completion popup
+  
+  // Add state for popups
   const [showTimerCompletedPopup, setShowTimerCompletedPopup] = useState(false);
+  const [showSaveSessionPopup, setShowSaveSessionPopup] = useState(false);
   
   // Audio settings from localStorage or defaults
   const [tickingVolume, setTickingVolume] = useState(() => {
@@ -52,6 +59,8 @@ export default function Timer({ modeData, onModeChange }) {
     if (currentMode) {
       setActiveMode(currentMode);
       setTimeLeft(currentMode.minutes * 60);
+      setOriginalDuration(currentMode.minutes * 60);
+      setElapsedTime(0);
     }
   }, [modeData, activeMode.mode]);
   
@@ -108,9 +117,18 @@ export default function Timer({ modeData, onModeChange }) {
           setIsRunning(false);
           tickingRef.current.pause();
           
+          // Calculate elapsed time (it's the full duration when completed)
+          const totalElapsed = originalDuration;
+          setElapsedTime(totalElapsed);
+          
           // Play alarm sound when timer ends
           if (alarmVolume > 0) {
             playAlarmWithRepeats(alarmRepeats);
+          }
+          
+          // Save completed session
+          if (activeMode.mode === "Focus") {
+            saveCompletedSession(activeMode.mode, totalElapsed);
           }
           
           // Determine what to do when timer ends
@@ -127,6 +145,10 @@ export default function Timer({ modeData, onModeChange }) {
           
           return 0;
         }
+        
+        // Update elapsed time as the timer runs
+        setElapsedTime(originalDuration - prev + 1);
+        
         return prev - 1;
       });
     }, 1000);
@@ -136,7 +158,7 @@ export default function Timer({ modeData, onModeChange }) {
       clearTimeout(tickingTimeout);
       tickingRef.current.pause();
     };
-  }, [isRunning, tickingVolume, alarmVolume, alarmRepeats, activeMode.mode, autoStartBreak, autoStartFocus]);
+  }, [isRunning, originalDuration, tickingVolume, alarmVolume, alarmRepeats, activeMode.mode, autoStartBreak, autoStartFocus]);
   
   let playAlarm; // Declare outside so it can be referenced globally
 
@@ -173,6 +195,28 @@ export default function Timer({ modeData, onModeChange }) {
     }
   }, [activeMode, modeData, onModeChange]);
 
+  // Function to save completed or partial session
+  const saveCompletedSession = (mode, durationInSeconds) => {
+    if (mode === "Focus") {
+      // Get existing sessions from localStorage or initialize empty array
+      const existingSessions = JSON.parse(localStorage.getItem('focusSessions') || '[]');
+      
+      // Create new session object
+      const newSession = {
+        startTime: new Date().getTime() - (durationInSeconds * 1000), // Calculate when the session started
+        endTime: new Date().getTime(),
+        duration: durationInSeconds,
+        completed: durationInSeconds === originalDuration // Mark as completed only if full duration
+      };
+      
+      // Add to existing sessions
+      existingSessions.push(newSession);
+      
+      // Save back to localStorage
+      localStorage.setItem('focusSessions', JSON.stringify(existingSessions));
+    }
+  };
+
   // Function to handle automatic timer switching when auto-start is enabled
   const handleAutoStartNextTimer = () => {
     stopAlarmPlayback();
@@ -191,6 +235,8 @@ export default function Timer({ modeData, onModeChange }) {
       const nextMode = modeData[nextModeIndex];
       setActiveMode(nextMode);
       setTimeLeft(nextMode.minutes * 60);
+      setOriginalDuration(nextMode.minutes * 60);
+      setElapsedTime(0);
       
       // Important: Add a small delay before starting the timer
       // This ensures state updates have completed
@@ -221,6 +267,8 @@ export default function Timer({ modeData, onModeChange }) {
       const nextMode = modeData[nextModeIndex];
       setActiveMode(nextMode);
       setTimeLeft(nextMode.minutes * 60);
+      setOriginalDuration(nextMode.minutes * 60);
+      setElapsedTime(0);
       
       // Important: Add a small delay before starting the timer
       // This ensures state updates have completed
@@ -239,14 +287,50 @@ export default function Timer({ modeData, onModeChange }) {
 
   // Function to manually toggle the timer
   const toggleTimer = () => {
-    setIsRunning(!isRunning);
+    if (isRunning) {
+      // Pausing the timer - only show confirmation popup if in Focus mode
+      // and some time has elapsed (greater than 10 seconds for a meaningful session)
+      if (activeMode.mode === "Focus" && elapsedTime > 0) {
+        setIsRunning(false);
+        setShowSaveSessionPopup(true);
+      } else {
+        setIsRunning(false);
+      }
+    } else {
+      // Starting the timer
+      setIsRunning(true);
+    }
+  };
+
+  // Handlers for save session popup
+  const handleSaveSession = () => {
+    // Save the partial session
+    saveCompletedSession(activeMode.mode, elapsedTime);
+    setShowSaveSessionPopup(false);
+  };
+
+  const handleDiscardSession = () => {
+    // Just close the popup without saving
+    setShowSaveSessionPopup(false);
   };
 
   // Function to handle mode selection
   const handleModeSelect = (mode) => {
-    setActiveMode(mode);
-    setTimeLeft(mode.minutes * 60);
-    setIsRunning(false);
+    // If we're changing modes while a Focus timer is running,
+    // ask if the user wants to save their progress
+    if (isRunning && activeMode.mode === "Focus" && mode.mode !== "Focus" && elapsedTime > 10) {
+      setIsRunning(false);
+      setShowSaveSessionPopup(true);
+      // Store the mode to switch to after deciding whether to save
+      sessionStorage.setItem('pendingMode', JSON.stringify(mode));
+    } else {
+      // Direct mode change
+      setActiveMode(mode);
+      setTimeLeft(mode.minutes * 60);
+      setOriginalDuration(mode.minutes * 60);
+      setElapsedTime(0);
+      setIsRunning(false);
+    }
   };
 
   return (
@@ -294,7 +378,7 @@ export default function Timer({ modeData, onModeChange }) {
         </div>
       </div>
       
-      {/* Timer completed popup - only shown if auto-start is not enabled for the current mode transition */}
+      {/* Timer completed popup */}
       <TimerCompletedPopup 
         visible={showTimerCompletedPopup} 
         onClose={() => {
@@ -304,6 +388,14 @@ export default function Timer({ modeData, onModeChange }) {
         mode={activeMode.mode}
         onStartNext={handleStartNext}
         onStop={handleStop}
+      />
+      
+      {/* Save session popup when pausing */}
+      <SaveSessionConfirmPopup
+        visible={showSaveSessionPopup}
+        elapsedTime={elapsedTime}
+        onSave={handleSaveSession}
+        onDiscard={handleDiscardSession}
       />
     </main>
   );

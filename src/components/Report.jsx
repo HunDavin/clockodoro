@@ -1,15 +1,22 @@
 import { useState, useEffect } from "react";
 import "../css/report.css";
+import { getFocusTimeStats } from "../js/focusTimeCalculator";
 
 export default function Report({ visible, onClose }) {
   const [view, setView] = useState("Daily"); // "Daily", "Weekly", "Monthly"
+  const [focusTime, setFocusTime] = useState({
+    daily: { hours: 0, minutes: 0, seconds: 0 },
+    weekly: { hours: 0, minutes: 0, seconds: 0 },
+    monthly: { hours: 0, minutes: 0, seconds: 0 }
+  });
   
-  // Sample data - in a real app this would be calculated from actual usage
-  const focusTime = {
-    daily: { hours: 2, minutes: 35, seconds: 45 },
-    weekly: { hours: 14, minutes: 22, seconds: 10 },
-    monthly: { hours: 58, minutes: 45, seconds: 30 }
-  };
+  // Load real usage data when the component mounts or becomes visible
+  useEffect(() => {
+    if (visible) {
+      const stats = getFocusTimeStats();
+      setFocusTime(stats);
+    }
+  }, [visible]);
   
   // Calculate which data to show based on current view
   const currentData = view === "Daily" 
@@ -25,7 +32,7 @@ export default function Report({ visible, onClose }) {
       <div className="popup-overlay active"></div>
       <div className="report-popup">
         <div className="report-header">
-          <h2>Charts</h2>
+          <h2>Focus Time Report</h2>
           <button className="close-button" onClick={onClose}>×</button>
         </div>
         
