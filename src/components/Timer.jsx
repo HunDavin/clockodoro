@@ -420,6 +420,7 @@ export default function Timer({ modeData, onModeChange }) {
       <div className="controls-container">
         {modeData.map((mode) => {
           const isActive = activeMode.mode === mode.mode;
+          const isLongBreak = mode.mode === "Long Break";
           return (
             <div 
               key={mode.id} 
@@ -434,7 +435,7 @@ export default function Timer({ modeData, onModeChange }) {
                 <span className="mode-name">{mode.mode}</span>
               </div>
               <div className="mode-content">
-                <img className="mode-icon" src={mode.icon} alt={mode.mode} />
+                <img className={`mode-icon ${isLongBreak ? "rest-icon" : ""}`} src={mode.icon} alt={mode.mode} />
                 <div className="mode-time-display" style={{ color: isActive ? "white" : "#333" }}>
                   <span className="mode-minutes">{mode.minutes}</span>
                   <span className="min-label">min</span>

@@ -4,7 +4,7 @@ import Task from "./Task";
 export default function Header({ onTimer, onReport }) {
   return (
     <header className="header">
-      <div className="logo-container">
+      <div className="logo-container" onClick={() => window.location.reload()}>
         <img src={logo} alt="Clockodoro" height="42" />
         <span className="logo-text">Clockodoro</span>
       </div>
