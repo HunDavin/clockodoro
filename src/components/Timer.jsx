@@ -217,7 +217,7 @@ export default function Timer({ modeData, onModeChange }) {
   // Function to determine which break type to use based on the completed sessions
   const getNextBreakType = () => {
     // If we've completed the required number of focus sessions, it's time for a long break
-    if (completedFocusSessions % longBreakInterval === 0) {
+    if (completedFocusSessions > 0 && completedFocusSessions % longBreakInterval === 0) {
       return "Long Break";
     } else {
       return "Short Break";

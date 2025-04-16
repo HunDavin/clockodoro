@@ -1,5 +1,3 @@
-// Updated OptionPopup.jsx Component
-
 import { useState, useEffect } from "react";
 
 export default function OptionPopup({ onClose, onUpdate, modeData }) {
@@ -80,8 +78,9 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
     }
   }, [modeData, focusIndex, shortBreakIndex, longBreakIndex]);
 
-  // Save all settings to localStorage
-  useEffect(() => {
+  // Handle saving all settings to localStorage when Done is clicked
+  const saveSettings = () => {
+    // Save all settings to localStorage
     localStorage.setItem("alarmVolume", alarmVolume);
     localStorage.setItem("tickingVolume", tickingVolume);
     localStorage.setItem("alarmSound", alarmSound);
@@ -98,18 +97,22 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
     
     // Trigger storage event for Timer component to detect
     window.dispatchEvent(new Event('storage'));
-  }, [alarmVolume, tickingVolume, alarmSound, tickingSound, alarmRepeats, 
-      longBreakInterval, autoStartBreak, autoStartFocus, focus, shortBreak, longBreak]);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Save the timer durations to localStorage again to ensure they're saved
-    localStorage.setItem("focusDuration", focus);
-    localStorage.setItem("shortBreakDuration", shortBreak);
-    localStorage.setItem("longBreakDuration", longBreak);
+    
+    // Save all settings when user submits the form
+    saveSettings();
     
     // Call the parent's update function to update the UI
     onUpdate(focus, longBreak, shortBreak);
+  };
+
+  // Handle the close button click without saving
+  const handleClose = () => {
+    // Just close the popup without saving any changes
+    onClose();
   };
 
   return (
@@ -118,7 +121,7 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
       <form className="options-popup" onSubmit={handleSubmit}>
         <div className="options-header">
           <h2>Options</h2>
-          <button type="button" className="close-button" onClick={onClose}>×</button>
+          <button type="button" className="close-button" onClick={handleClose}>×</button>
         </div>
         <div className="options-content">
           <div className="option-section">
