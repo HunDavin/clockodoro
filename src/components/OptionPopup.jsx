@@ -1,3 +1,5 @@
+// Updated OptionPopup.jsx Component
+
 import { useState, useEffect } from "react";
 
 export default function OptionPopup({ onClose, onUpdate, modeData }) {
@@ -5,9 +7,24 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
   const shortBreakIndex = modeData.findIndex(m => m.mode === "Short Break");
   const longBreakIndex = modeData.findIndex(m => m.mode === "Long Break");
   
-  const [focus, setFocus] = useState(modeData[focusIndex].minutes);
-  const [shortBreak, setShortBreak] = useState(modeData[shortBreakIndex].minutes);
-  const [longBreak, setLongBreak] = useState(modeData[longBreakIndex].minutes);
+  const [focus, setFocus] = useState(() => {
+    // First try to get from localStorage, otherwise use modeData
+    return localStorage.getItem("focusDuration") ? 
+      parseInt(localStorage.getItem("focusDuration")) : 
+      modeData[focusIndex].minutes;
+  });
+  
+  const [shortBreak, setShortBreak] = useState(() => {
+    return localStorage.getItem("shortBreakDuration") ?
+      parseInt(localStorage.getItem("shortBreakDuration")) :
+      modeData[shortBreakIndex].minutes;
+  });
+  
+  const [longBreak, setLongBreak] = useState(() => {
+    return localStorage.getItem("longBreakDuration") ?
+      parseInt(localStorage.getItem("longBreakDuration")) :
+      modeData[longBreakIndex].minutes;
+  });
   
   // Long break interval state
   const [longBreakInterval, setLongBreakInterval] = useState(() => {
@@ -50,10 +67,17 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
     background: `linear-gradient(to right, #FF5C5C 0%, #FF5C5C ${tickingVolume}%, #ddd ${tickingVolume}%, #ddd 100%)`
   };
   
+  // Update local state if modeData changes from other sources
   useEffect(() => {
-    if (focusIndex !== -1) setFocus(modeData[focusIndex].minutes);
-    if (shortBreakIndex !== -1) setShortBreak(modeData[shortBreakIndex].minutes);
-    if (longBreakIndex !== -1) setLongBreak(modeData[longBreakIndex].minutes);
+    if (focusIndex !== -1 && !localStorage.getItem("focusDuration")) {
+      setFocus(modeData[focusIndex].minutes);
+    }
+    if (shortBreakIndex !== -1 && !localStorage.getItem("shortBreakDuration")) {
+      setShortBreak(modeData[shortBreakIndex].minutes);
+    }
+    if (longBreakIndex !== -1 && !localStorage.getItem("longBreakDuration")) {
+      setLongBreak(modeData[longBreakIndex].minutes);
+    }
   }, [modeData, focusIndex, shortBreakIndex, longBreakIndex]);
 
   // Save all settings to localStorage
@@ -67,12 +91,24 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
     localStorage.setItem("autoStartBreak", autoStartBreak);
     localStorage.setItem("autoStartFocus", autoStartFocus);
     
+    // Save timer durations to localStorage
+    localStorage.setItem("focusDuration", focus);
+    localStorage.setItem("shortBreakDuration", shortBreak);
+    localStorage.setItem("longBreakDuration", longBreak);
+    
     // Trigger storage event for Timer component to detect
     window.dispatchEvent(new Event('storage'));
-  }, [alarmVolume, tickingVolume, alarmSound, tickingSound, alarmRepeats, longBreakInterval, autoStartBreak, autoStartFocus]);
+  }, [alarmVolume, tickingVolume, alarmSound, tickingSound, alarmRepeats, 
+      longBreakInterval, autoStartBreak, autoStartFocus, focus, shortBreak, longBreak]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Save the timer durations to localStorage again to ensure they're saved
+    localStorage.setItem("focusDuration", focus);
+    localStorage.setItem("shortBreakDuration", shortBreak);
+    localStorage.setItem("longBreakDuration", longBreak);
+    
+    // Call the parent's update function to update the UI
     onUpdate(focus, longBreak, shortBreak);
   };
 

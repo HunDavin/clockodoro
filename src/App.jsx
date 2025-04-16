@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { modes } from "./data";
 import Header from "./components/Header";
 import Timer from "./components/Timer";
@@ -7,10 +7,79 @@ import OptionPopup from "./components/OptionPopup";
 import Report from "./components/Report";
 
 function App() {
-  const [mode, setMode] = useState([...modes]);
+  const [mode, setMode] = useState(() => {
+    // Initialize modes with values from localStorage if available
+    return modes.map(m => {
+      if (m.mode === "Focus") {
+        return {
+          ...m,
+          minutes: localStorage.getItem("focusDuration") 
+            ? parseInt(localStorage.getItem("focusDuration")) 
+            : m.minutes
+        };
+      }
+      if (m.mode === "Short Break") {
+        return {
+          ...m,
+          minutes: localStorage.getItem("shortBreakDuration") 
+            ? parseInt(localStorage.getItem("shortBreakDuration")) 
+            : m.minutes
+        };
+      }
+      if (m.mode === "Long Break") {
+        return {
+          ...m,
+          minutes: localStorage.getItem("longBreakDuration") 
+            ? parseInt(localStorage.getItem("longBreakDuration")) 
+            : m.minutes
+        };
+      }
+      return m;
+    });
+  });
+  
   const [showTimeOption, setShowTimeOption] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [modeIndex, setModeIndex] = useState(0);
+
+  // Listen for changes in localStorage
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setMode(prevMode => prevMode.map(m => {
+        if (m.mode === "Focus") {
+          return {
+            ...m,
+            minutes: localStorage.getItem("focusDuration") 
+              ? parseInt(localStorage.getItem("focusDuration")) 
+              : m.minutes
+          };
+        }
+        if (m.mode === "Short Break") {
+          return {
+            ...m,
+            minutes: localStorage.getItem("shortBreakDuration") 
+              ? parseInt(localStorage.getItem("shortBreakDuration")) 
+              : m.minutes
+          };
+        }
+        if (m.mode === "Long Break") {
+          return {
+            ...m,
+            minutes: localStorage.getItem("longBreakDuration") 
+              ? parseInt(localStorage.getItem("longBreakDuration")) 
+              : m.minutes
+          };
+        }
+        return m;
+      }));
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   const turnOnTimeOption = () => {
     setShowTimeOption(true); 
