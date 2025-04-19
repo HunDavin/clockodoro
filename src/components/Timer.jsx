@@ -335,9 +335,14 @@ export default function Timer({ modeData, onModeChange }) {
   // Function to handle stopping the timer
   const handleStop = () => {
     stopAlarmPlayback();
-    setPendingFocusCompletion(false); // Clear pending state if user stops
+    
+    // If there was a pending focus completion, increment the counter
+    if (pendingFocusCompletion) {
+      setCompletedFocusSessions(prev => prev + 1);
+      setPendingFocusCompletion(false);
+    }
+    
     setShowTimerCompletedPopup(false);
-    // Timer is already stopped, just close the popup
   };
 
   // Function to manually toggle the timer
