@@ -19,13 +19,13 @@ export default function Wave({ activeMode }) {
         } else if (activeMode.mode === "Short Break") {
             setWaveStyle({
                 background: "#7684FF",
-                height: "80vh",
+                height: "79vh",
                 minHeight: "555px"
             });
         } else if (activeMode.mode === "Long Break") {
             setWaveStyle({
                 background: "#696A74",
-                height: "80vh",
+                height: "79vh",
                 minHeight: "555px"
             });
         }

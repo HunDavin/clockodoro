@@ -175,6 +175,7 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
                 onChange={(e) => setLongBreakInterval(Number(e.target.value))}
                 className="interval-field" 
                 min="1" 
+                max="5"
               />
             </div>
           </div>

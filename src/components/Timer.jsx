@@ -408,14 +408,15 @@ export default function Timer({ modeData, onModeChange }) {
         <span className="time">{formatTime(seconds)}</span>
       </div>
       <div className="clock-icons">
-        <img src={clockIcon} alt="clockIcon" className="clock-icon" />
-        <img src={clockIcon} alt="clockIcon" className="clock-icon" />
-        <img src={clockIcon} alt="clockIcon" className="clock-icon" />
-        <img src={clockIcon} alt="clockIcon" className="clock-icon" />
-      </div>
-      {/* Display the number of completed focus sessions with dynamic color */}
-      <div className="focus-sessions-info" style={{ color: isBreakMode ? "rgba(255, 255, 255, 0.9)" : "" }}>
-        <span>Session {completedFocusSessions} of {longBreakInterval}</span>
+        {Array.from({ length: longBreakInterval }).map((_, index) => (
+          <img 
+            key={index}
+            src={clockIcon}
+            alt="session progress"
+            className="clock-icon" 
+            style={{ opacity: index < completedFocusSessions ? "1" : "0.4" }}
+          />
+        ))}
       </div>
       <div className="controls-container">
         {modeData.map((mode) => {
