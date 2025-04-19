@@ -3,7 +3,6 @@ import { useEffect } from "react";
 export default function TaskCompletedPopup({ visible, onClose, taskName }) {
   useEffect(() => {
     if (visible) {
-      // Auto-close the popup after 3 seconds
       const timer = setTimeout(() => {
         onClose();
       }, 3000);

@@ -25,16 +25,9 @@ export default function Task() {
     e.stopPropagation();
     
     if (selectedTask !== "Choose Task") {
-      // Save the task name before resetting
       setCompletedTaskName(selectedTask);
-      
-      // Show the completed popup
       setShowCompletedPopup(true);
-      
-      // Remove the task from the list
       setTasks(prev => prev.filter(task => task !== selectedTask));
-      
-      // Reset selected task
       setSelectedTask("Choose Task");
     }
   };
@@ -72,7 +65,14 @@ export default function Task() {
           ))}
           {tasks.length > 0 && <li className="task-divider"></li>}
           <li className="task-item add-task">
-            <input className="task-input" type="text" placeholder="Add Task" value={newTaskInput} onChange={(e) => setNewTaskInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleAddTask()} />
+            <input 
+              className="task-input" 
+              type="text" 
+              placeholder="Add Task" 
+              value={newTaskInput} 
+              onChange={(e) => setNewTaskInput(e.target.value)} 
+              onKeyDown={(e) => e.key === "Enter" && handleAddTask()} 
+            />
             <button className="task-input-btn" onClick={handleAddTask}>&#43;</button>
           </li>
         </ul>

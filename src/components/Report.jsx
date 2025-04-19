@@ -3,7 +3,7 @@ import "../css/report.css";
 import { getFocusTimeStats, resetFocusTimeData } from "../js/focusTimeCalculator";
 
 export default function Report({ visible, onClose }) {
-  const [view, setView] = useState("Daily"); // "Daily", "Weekly", "Monthly"
+  const [view, setView] = useState("Daily");
   const [focusTime, setFocusTime] = useState({
     daily: { hours: 0, minutes: 0, seconds: 0 },
     weekly: { hours: 0, minutes: 0, seconds: 0 },
@@ -11,40 +11,32 @@ export default function Report({ visible, onClose }) {
   });
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   
-  // Load real usage data when the component mounts or becomes visible
   useEffect(() => {
     if (visible) {
       loadStats();
     }
   }, [visible]);
   
-  // Function to load stats
   const loadStats = () => {
     const stats = getFocusTimeStats();
     setFocusTime(stats);
   };
   
-  // Calculate which data to show based on current view
   const currentData = view === "Daily" 
     ? focusTime.daily 
     : view === "Weekly" 
       ? focusTime.weekly 
       : focusTime.monthly;
 
-  // Function to handle reset
   const handleReset = () => {
     setShowResetConfirm(true);
   };
   
-  // Function to confirm reset
   const confirmReset = () => {
-    let timeframe = view.toLowerCase();
-    
-    // Reset data based on the current view
+    const timeframe = view.toLowerCase();
     const success = resetFocusTimeData(timeframe);
     
     if (success) {
-      // Reload the stats
       loadStats();
       setShowResetConfirm(false);
     } else {
@@ -52,7 +44,6 @@ export default function Report({ visible, onClose }) {
     }
   };
   
-  // Function to cancel reset
   const cancelReset = () => {
     setShowResetConfirm(false);
   };

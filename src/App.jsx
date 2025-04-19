@@ -8,7 +8,6 @@ import Report from "./components/Report";
 
 function App() {
   const [mode, setMode] = useState(() => {
-    // Initialize modes with values from localStorage if available
     return modes.map(m => {
       if (m.mode === "Focus") {
         return {
@@ -42,7 +41,6 @@ function App() {
   const [showReport, setShowReport] = useState(false);
   const [modeIndex, setModeIndex] = useState(0);
 
-  // Listen for changes in localStorage
   useEffect(() => {
     const handleStorageChange = () => {
       setMode(prevMode => prevMode.map(m => {

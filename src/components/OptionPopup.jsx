@@ -5,57 +5,49 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
   const shortBreakIndex = modeData.findIndex(m => m.mode === "Short Break");
   const longBreakIndex = modeData.findIndex(m => m.mode === "Long Break");
   
-  const [focus, setFocus] = useState(() => {
-    // First try to get from localStorage, otherwise use modeData
-    return localStorage.getItem("focusDuration") ? 
-      parseInt(localStorage.getItem("focusDuration")) : 
-      modeData[focusIndex].minutes;
-  });
+  const [focus, setFocus] = useState(() => 
+    parseInt(localStorage.getItem("focusDuration")) || modeData[focusIndex].minutes
+  );
   
-  const [shortBreak, setShortBreak] = useState(() => {
-    return localStorage.getItem("shortBreakDuration") ?
-      parseInt(localStorage.getItem("shortBreakDuration")) :
-      modeData[shortBreakIndex].minutes;
-  });
+  const [shortBreak, setShortBreak] = useState(() => 
+    parseInt(localStorage.getItem("shortBreakDuration")) || modeData[shortBreakIndex].minutes
+  );
   
-  const [longBreak, setLongBreak] = useState(() => {
-    return localStorage.getItem("longBreakDuration") ?
-      parseInt(localStorage.getItem("longBreakDuration")) :
-      modeData[longBreakIndex].minutes;
-  });
+  const [longBreak, setLongBreak] = useState(() => 
+    parseInt(localStorage.getItem("longBreakDuration")) || modeData[longBreakIndex].minutes
+  );
   
-  // Long break interval state
-  const [longBreakInterval, setLongBreakInterval] = useState(() => {
-    return localStorage.getItem("longBreakInterval") ? 
-      parseInt(localStorage.getItem("longBreakInterval")) : 
-      4;
-  });
+  const [longBreakInterval, setLongBreakInterval] = useState(() => 
+    parseInt(localStorage.getItem("longBreakInterval")) || 4
+  );
   
-  // Auto start settings
-  const [autoStartBreak, setAutoStartBreak] = useState(() => {
-    return localStorage.getItem("autoStartBreak") === "true";
-  });
+  const [autoStartBreak, setAutoStartBreak] = useState(() => 
+    localStorage.getItem("autoStartBreak") === "true"
+  );
   
-  const [autoStartFocus, setAutoStartFocus] = useState(() => {
-    return localStorage.getItem("autoStartFocus") === "true";
-  });
+  const [autoStartFocus, setAutoStartFocus] = useState(() => 
+    localStorage.getItem("autoStartFocus") === "true"
+  );
   
-  // Sound settings
-  const [alarmVolume, setAlarmVolume] = useState(() => {
-    return localStorage.getItem("alarmVolume") || 50;
-  });
-  const [tickingVolume, setTickingVolume] = useState(() => {
-    return localStorage.getItem("tickingVolume") || 50;
-  });
-  const [alarmSound, setAlarmSound] = useState(() => {
-    return localStorage.getItem("alarmSound") || "Ding";
-  });
-  const [tickingSound, setTickingSound] = useState(() => {
-    return localStorage.getItem("tickingSound") || "Rain";
-  });
-  const [alarmRepeats, setAlarmRepeats] = useState(() => {
-    return localStorage.getItem("alarmRepeats") || 4;
-  });
+  const [alarmVolume, setAlarmVolume] = useState(() => 
+    localStorage.getItem("alarmVolume") || 50
+  );
+  
+  const [tickingVolume, setTickingVolume] = useState(() => 
+    localStorage.getItem("tickingVolume") || 50
+  );
+  
+  const [alarmSound, setAlarmSound] = useState(() => 
+    localStorage.getItem("alarmSound") || "Alarm"
+  );
+  
+  const [tickingSound, setTickingSound] = useState(() => 
+    localStorage.getItem("tickingSound") || "Tick"
+  );
+  
+  const [alarmRepeats, setAlarmRepeats] = useState(() => 
+    localStorage.getItem("alarmRepeats") || 4
+  );
   
   const slider1Style = {
     background: `linear-gradient(to right, #FF5C5C 0%, #FF5C5C ${alarmVolume}%, #ddd ${alarmVolume}%, #ddd 100%)`
@@ -65,7 +57,6 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
     background: `linear-gradient(to right, #FF5C5C 0%, #FF5C5C ${tickingVolume}%, #ddd ${tickingVolume}%, #ddd 100%)`
   };
   
-  // Update local state if modeData changes from other sources
   useEffect(() => {
     if (focusIndex !== -1 && !localStorage.getItem("focusDuration")) {
       setFocus(modeData[focusIndex].minutes);
@@ -78,9 +69,7 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
     }
   }, [modeData, focusIndex, shortBreakIndex, longBreakIndex]);
 
-  // Handle saving all settings to localStorage when Done is clicked
   const saveSettings = () => {
-    // Save all settings to localStorage
     localStorage.setItem("alarmVolume", alarmVolume);
     localStorage.setItem("tickingVolume", tickingVolume);
     localStorage.setItem("alarmSound", alarmSound);
@@ -90,29 +79,17 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
     localStorage.setItem("autoStartBreak", autoStartBreak);
     localStorage.setItem("autoStartFocus", autoStartFocus);
     
-    // Save timer durations to localStorage
     localStorage.setItem("focusDuration", focus);
     localStorage.setItem("shortBreakDuration", shortBreak);
     localStorage.setItem("longBreakDuration", longBreak);
     
-    // Trigger storage event for Timer component to detect
     window.dispatchEvent(new Event('storage'));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Save all settings when user submits the form
     saveSettings();
-    
-    // Call the parent's update function to update the UI
     onUpdate(focus, longBreak, shortBreak);
-  };
-
-  // Handle the close button click without saving
-  const handleClose = () => {
-    // Just close the popup without saving any changes
-    onClose();
   };
 
   return (
@@ -121,7 +98,7 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
       <form className="options-popup" onSubmit={handleSubmit}>
         <div className="options-header">
           <h2>Options</h2>
-          <button type="button" className="close-button" onClick={handleClose}>×</button>
+          <button type="button" className="close-button" onClick={onClose}>×</button>
         </div>
         <div className="options-content">
           <div className="option-section">
@@ -129,15 +106,33 @@ export default function OptionPopup({ onClose, onUpdate, modeData }) {
             <div className="time-inputs">
               <div className="time-input">
                 <label>Pomodoro</label>
-                <input type="number" className="time-field" onChange={(e) => setFocus(Number(e.target.value))} value={focus} min="0" />
+                <input 
+                  type="number" 
+                  className="time-field" 
+                  onChange={(e) => setFocus(Number(e.target.value))} 
+                  value={focus} 
+                  min="0" 
+                />
               </div>
               <div className="time-input">
                 <label>Short Break</label>
-                <input type="number" value={shortBreak} className="time-field" onChange={(e) => setShortBreak(Number(e.target.value))} min="0" />
+                <input 
+                  type="number" 
+                  value={shortBreak} 
+                  className="time-field" 
+                  onChange={(e) => setShortBreak(Number(e.target.value))} 
+                  min="0" 
+                />
               </div>
               <div className="time-input">
                 <label>Long Break</label>
-                <input type="number" value={longBreak} className="time-field" onChange={(e) => setLongBreak(Number(e.target.value))} min="0" />
+                <input 
+                  type="number" 
+                  value={longBreak} 
+                  className="time-field" 
+                  onChange={(e) => setLongBreak(Number(e.target.value))} 
+                  min="0" 
+                />
               </div>
             </div>
           </div>

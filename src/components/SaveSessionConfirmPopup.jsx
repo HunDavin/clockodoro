@@ -1,11 +1,8 @@
-// src/components/SaveSessionConfirmPopup.jsx
-
 import React from "react";
 
 export default function SaveSessionConfirmPopup({ visible, onSave, onDiscard, elapsedTime }) {
   if (!visible) return null;
 
-  // Format elapsed time for display
   const formatTime = (seconds) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
