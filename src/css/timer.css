@@ -27,11 +27,20 @@
 }
 
 .clock-icons {
-  background-color: #000;
-  opacity: 6%;
+  background-color: rgba(0, 0, 0, 0.06);
   display: flex;
   padding:5px 10px;
   border-radius: 25px;
+}
+
+.clock-icon {
+  filter: brightness(0) invert(1);
+  opacity: 6%;
+}
+
+.clock-icon:nth-child(1) {
+  filter: brightness(0) invert(1);
+  opacity: 100%;
 }
 
 .controls-container {
