@@ -312,10 +312,28 @@ export default function Timer({ modeData, onModeChange }) {
   const handleSaveSession = () => {
     saveCompletedSession(activeMode.mode, elapsedTime);
     setShowSaveSessionPopup(false);
+    const pendingMode = JSON.parse(sessionStorage.getItem('pendingMode'));
+    
+    if (pendingMode) {
+      setActiveMode(pendingMode);
+      setTimeLeft(pendingMode.minutes * 60);
+      setOriginalDuration(pendingMode.minutes * 60);
+      setElapsedTime(0);
+      sessionStorage.removeItem('pendingMode');
+    }
   };
 
   const handleDiscardSession = () => {
     setShowSaveSessionPopup(false);
+    const pendingMode = JSON.parse(sessionStorage.getItem('pendingMode'));
+    
+    if (pendingMode) {
+      setActiveMode(pendingMode);
+      setTimeLeft(pendingMode.minutes * 60);
+      setOriginalDuration(pendingMode.minutes * 60);
+      setElapsedTime(0);
+      sessionStorage.removeItem('pendingMode');
+    }
   };
 
   const handleModeSelect = (mode) => {
@@ -336,8 +354,6 @@ export default function Timer({ modeData, onModeChange }) {
       setPendingFocusCompletion(false);
     }
   };
-
-  const isBreakMode = activeMode.mode === "Short Break" || activeMode.mode === "Long Break";
 
   return (
     <main className="timer-section">
